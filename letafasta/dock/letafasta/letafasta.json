@@ -1,0 +1,23 @@
+{
+ "app": "letafasta",
+ "creation": "2026-11-16 17:25:20",
+ "docstatus": 0,
+ "doctype": "Dock",
+ "idx": 0,
+ "items": [
+  {
+   "added": 0,
+   "hidden": 0,
+   "icon": "shopping-cart",
+   "link_to": "LetaFasta",
+   "link_type": "Sidebar",
+   "title": "LetaFasta"
+  }
+ ],
+ "modified": "2026-11-16 17:25:20",
+ "modified_by": "Administrator",
+ "name": "letafasta",
+ "owner": "Administrator",
+ "standard": 1,
+ "user": ""
+}

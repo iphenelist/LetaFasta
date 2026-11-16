@@ -7,6 +7,8 @@ Registered in hooks.py:
 """
 
 import frappe
+from frappe.query_builder import DocType
+from frappe.utils import now_datetime
 
 
 def flush_sms_queue():
@@ -26,18 +28,24 @@ def run_scheduled_jobs():
 
 def expire_orders():
 	"""Cancel confirmed orders older than 24h with no booked loads."""
-	from frappe.utils import now_datetime
-	expired = frappe.db.sql("""
-		SELECT o.name
-		FROM `tabLF Order` o
-		WHERE o.status = 'confirmed'
-		  AND o.expires_at < %s
-		  AND NOT EXISTS (
-		      SELECT 1 FROM `tabLF Load` l
-		      WHERE l.order = o.name
-		        AND l.status IN ('booked','departed','arrived','collected')
-		  )
-	""", (now_datetime(),), as_dict=True)
+	Order = DocType("LF Order")
+	Load = DocType("LF Load")
+
+	booked_orders = (
+		frappe.qb.from_(Load)
+		.select(Load.order)
+		.where(Load.status.isin(["booked", "departed", "arrived", "collected"]))
+	)
+
+	expired = (
+		frappe.qb.from_(Order)
+		.select(Order.name)
+		.where(
+			(Order.status == "confirmed")
+			& (Order.expires_at < now_datetime())
+			& Order.name.notin(booked_orders)
+		)
+	).run(as_dict=True)
 
 	for row in expired:
 		frappe.db.set_value("LF Order", row.name, {
@@ -52,23 +60,29 @@ def expire_orders():
 
 def expire_rfqs():
 	"""Expire open/quoted RFQs past their expires_at."""
-	from frappe.utils import now_datetime
-	frappe.db.sql("""
-		UPDATE `tabLF RFQ`
-		SET status = 'expired'
-		WHERE status IN ('open','quoted')
-		  AND expires_at < %s
-	""", (now_datetime(),))
+	Rfq = DocType("LF RFQ")
+	(
+		frappe.qb.update(Rfq)
+		.set(Rfq.status, "expired")
+		.where(
+			Rfq.status.isin(["open", "quoted"])
+			& (Rfq.expires_at < now_datetime())
+		)
+	).run()
 	frappe.db.commit()
 
 
 def _restore_stock_for_order(order_name):
-	items = frappe.get_all("LF Order Item",
-	                       filters={"parent": order_name},
-	                       fields=["product", "quantity"])
+	Product = DocType("LF Product")
+	items = frappe.get_all(
+		"LF Order Item",
+		filters={"parent": order_name},
+		fields=["product", "quantity"],
+	)
 	for item in items:
 		if item.product:
-			frappe.db.sql(
-				"UPDATE `tabLF Product` SET stock_quantity = stock_quantity + %s WHERE name = %s",
-				(item.quantity, item.product),
-			)
+			(
+				frappe.qb.update(Product)
+				.set(Product.stock_quantity, Product.stock_quantity + item.quantity)
+				.where(Product.name == item.product)
+			).run()

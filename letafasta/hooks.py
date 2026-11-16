@@ -5,12 +5,15 @@ app_description = "B2B bulk-materials procurement and last-mile freight marketpl
 app_email = "innocentphenelist@gmail.com"
 app_license = "mit"
 
+app_logo_url = "/assets/letafasta/images/letafasta-logo.svg"
+
+# No "route": a bare /desk/<module> is not a valid v16 page; the client
+# falls through to the Dock's first Sidebar entry instead.
 add_to_apps_screen = [
     {
         "name": "letafasta",
-        "logo": "/assets/letafasta/images/logo.svg",
+        "logo": app_logo_url,
         "title": "LetaFasta",
-        "route": "/letafasta",
     }
 ]
 

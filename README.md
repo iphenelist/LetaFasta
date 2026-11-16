@@ -1,40 +1,47 @@
-### LetaFasta
+# LetaFasta
 
-LetaFasta
+B2B bulk-materials procurement and last-mile freight marketplace for Tanzania. Buyers discover cement, grain and building-material suppliers, negotiate via RFQ or buy at catalogue price, and track truck-by-truck delivery to named collection hubs. Payment is off-platform.
 
-### Installation
+**Frappe v16 · standalone (no ERPNext)**
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+## Docs
+
+| Area | File |
+|---|---|
+| Organisations & onboarding | [docs/organisations.md](docs/organisations.md) |
+| Catalogue & products | [docs/catalogue.md](docs/catalogue.md) |
+| RFQ & price negotiation | [docs/rfq.md](docs/rfq.md) |
+| Orders & load logistics | [docs/orders.md](docs/orders.md) |
+| Trust layer (ratings) | [docs/trust.md](docs/trust.md) |
+| Admin desk & platform settings | [docs/admin.md](docs/admin.md) |
+
+## Roles
+
+| Role | Who |
+|---|---|
+| `LF Admin` | Letapro staff — full desk + portal |
+| `LF Buyer` | Buyers — portal only |
+| `LF Supplier Owner` | Supplier org owner — portal supplier view |
+| `LF Supplier Staff` | Supplier staff — portal read |
+
+## Development
 
 ```bash
-cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch main
-bench install-app letafasta
+# New site
+bench new-site letafasta.localhost --install-app letafasta
+
+# Migrate
+bench --site letafasta.localhost migrate
+
+# Create Admin workspace (must run after migrate — cannot be a fixture)
+bench --site letafasta.localhost console
+# >>> from letafasta.setup import create_workspace; create_workspace()
 ```
 
-### Contributing
+## Scheduler
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
-
-```bash
-cd apps/letafasta
-pre-commit install
-```
-
-Pre-commit is configured to use the following tools for checking and formatting your code:
-
-- ruff
-- eslint
-- prettier
-- pyupgrade
-### CI
-
-This app can use GitHub Actions for CI. The following workflows are configured:
-
-- CI: Installs this app and runs unit tests on every push to `develop` branch.
-- Linters: Runs [Frappe Semgrep Rules](https://github.com/frappe/semgrep-rules) and [pip-audit](https://pypi.org/project/pip-audit/) on every pull request.
-
-
-### License
-
-mit
+| Job | Interval | Function |
+|---|---|---|
+| Expire orders | every 15 min | `tasks.expire_orders` |
+| Expire RFQs | every 15 min | `tasks.expire_rfqs` |
+| Flush SMS queue | every 1 min | `tasks.flush_sms_queue` (Phase 6) |

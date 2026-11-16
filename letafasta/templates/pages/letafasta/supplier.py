@@ -1,40 +1,44 @@
 import frappe
+from frappe.query_builder import DocType
+
+from letafasta.letafasta.utils import get_supplier_org
 
 
 def get_context(context):
-    if frappe.session.user == "Guest":
-        frappe.local.flags.redirect_location = "/login?redirect-to=/letafasta/supplier"
-        raise frappe.Redirect
+	if frappe.session.user == "Guest":
+		frappe.local.flags.redirect_location = "/login?redirect-to=/letafasta/supplier"
+		raise frappe.Redirect
 
-    supplier_row = frappe.db.sql("""
-        SELECT parent FROM `tabLF Organization Member`
-        WHERE user = %s AND parenttype = 'LF Organization' LIMIT 1
-    """, (frappe.session.user,), as_dict=True)
+	supplier_name = get_supplier_org()
+	if not supplier_name:
+		frappe.local.flags.redirect_location = "/letafasta/onboarding"
+		raise frappe.Redirect
 
-    if not supplier_row:
-        frappe.local.flags.redirect_location = "/letafasta/onboarding"
-        raise frappe.Redirect
+	org = frappe.get_doc("LF Organization", supplier_name)
 
-    org = frappe.get_doc("LF Organization", supplier_row[0].parent)
+	stats = {
+		"active_orders": frappe.db.count("LF Order", {
+			"supplier": org.name,
+			"status": ["in", ["confirmed", "in_progress", "partly_collected"]],
+		}),
+		"open_rfqs": frappe.db.count("LF RFQ", {"status": ["in", ["open", "quoted"]]}),
+	}
 
-    stats = {
-        "active_orders": frappe.db.count("LF Order", {
-            "supplier": org.name,
-            "status": ["in", ["confirmed", "in_progress", "partly_collected"]],
-        }),
-        "open_rfqs": frappe.db.count("LF RFQ", {"status": ["in", ["open", "quoted"]]}),
-    }
+	Order = DocType("LF Order")
+	Hub = DocType("LF Hub")
+	recent_orders = (
+		frappe.qb.from_(Order)
+		.inner_join(Hub).on(Hub.name == Order.hub)
+		.select(
+			Order.name, Order.buyer, Order.status, Order.agreed_price,
+			Hub.hub_name,
+		)
+		.where(Order.supplier == org.name)
+		.orderby(Order.creation, order=frappe.qb.desc)
+		.limit(10)
+	).run(as_dict=True)
 
-    recent_orders = frappe.db.sql("""
-        SELECT o.name, o.buyer, o.status, o.agreed_price, h.hub_name
-        FROM `tabLF Order` o
-        JOIN `tabLF Hub` h ON h.name = o.hub
-        WHERE o.supplier = %(supplier)s
-        ORDER BY o.creation DESC
-        LIMIT 10
-    """, {"supplier": org.name}, as_dict=True)
-
-    context.org = org
-    context.stats = stats
-    context.recent_orders = recent_orders
-    context.no_cache = 1
+	context.org = org
+	context.stats = stats
+	context.recent_orders = recent_orders
+	context.no_cache = 1

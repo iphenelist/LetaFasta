@@ -1,0 +1,197 @@
+{
+ "actions": [],
+ "autoname": "RFQ-.#####",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rfq_title",
+  "buyer",
+  "status",
+  "column_break_basic",
+  "expires_at",
+  "accepted_quote",
+  "product_section",
+  "product",
+  "product_description",
+  "quantity",
+  "column_break_product",
+  "unit_label",
+  "hub",
+  "preferred_date",
+  "budget_per_unit",
+  "notes_section",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "rfq_title",
+   "fieldtype": "Data",
+   "label": "RFQ Title",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_global_search": 1
+  },
+  {
+   "fieldname": "buyer",
+   "fieldtype": "Link",
+   "label": "Buyer",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "open\nquoted\naccepted\nexpired\ncancelled",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expires_at",
+   "fieldtype": "Datetime",
+   "label": "Expires At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accepted_quote",
+   "fieldtype": "Link",
+   "label": "Accepted Quote",
+   "options": "LF RFQ Quote",
+   "read_only": 1
+  },
+  {
+   "fieldname": "product_section",
+   "fieldtype": "Section Break",
+   "label": "Product Details"
+  },
+  {
+   "fieldname": "product",
+   "fieldtype": "Link",
+   "label": "Product (optional)",
+   "options": "LF Product",
+   "description": "Link to catalogue product, or leave blank and describe below"
+  },
+  {
+   "fieldname": "product_description",
+   "fieldtype": "Data",
+   "label": "Product Description",
+   "description": "Required if no product selected",
+   "depends_on": "eval:!doc.product"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "label": "Quantity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_product",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "unit_label",
+   "fieldtype": "Data",
+   "label": "Unit",
+   "reqd": 1
+  },
+  {
+   "fieldname": "hub",
+   "fieldtype": "Link",
+   "label": "Delivery Hub",
+   "options": "LF Hub",
+   "reqd": 1
+  },
+  {
+   "fieldname": "preferred_date",
+   "fieldtype": "Date",
+   "label": "Preferred Delivery Date"
+  },
+  {
+   "fieldname": "budget_per_unit",
+   "fieldtype": "Currency",
+   "label": "Budget per Unit (TZS)",
+   "options": "TZS",
+   "description": "Optional ceiling price — suppliers see this"
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Additional Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF RFQ",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Buyer",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Owner"
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Staff"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Blue",
+   "title": "Open"
+  },
+  {
+   "color": "Yellow",
+   "title": "Quoted"
+  },
+  {
+   "color": "Green",
+   "title": "Accepted"
+  },
+  {
+   "color": "Grey",
+   "title": "Expired"
+  },
+  {
+   "color": "Red",
+   "title": "Cancelled"
+  }
+ ],
+ "title_field": "rfq_title",
+ "track_changes": 1
+}

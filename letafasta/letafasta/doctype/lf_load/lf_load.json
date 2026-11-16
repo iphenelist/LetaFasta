@@ -1,0 +1,242 @@
+{
+ "actions": [],
+ "autoname": "LOAD-.#####",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "label",
+  "order",
+  "status",
+  "column_break_basic",
+  "weight_kg",
+  "share_amount",
+  "transport_section",
+  "transport_company_name",
+  "plate_number",
+  "driver_name",
+  "column_break_transport",
+  "driver_phone",
+  "transporter_org",
+  "waybill_no",
+  "waybill_file",
+  "schedule_section",
+  "departure_date",
+  "eta",
+  "column_break_schedule",
+  "departed_at",
+  "arrived_at",
+  "confirmed_at",
+  "items_section",
+  "items"
+ ],
+ "fields": [
+  {
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "label": "Load Label",
+   "description": "e.g. Truck A, Truck B",
+   "in_list_view": 1,
+   "in_global_search": 1
+  },
+  {
+   "fieldname": "order",
+   "fieldtype": "Link",
+   "label": "Order",
+   "options": "LF Order",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "planned",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "planned\nbooked\ndeparted\narrived\ncollected\ncancelled",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "weight_kg",
+   "fieldtype": "Int",
+   "label": "Weight (kg)"
+  },
+  {
+   "fieldname": "share_amount",
+   "fieldtype": "Currency",
+   "label": "Share Amount (TZS)",
+   "options": "TZS",
+   "description": "Portion of agreed order price carried by this truck"
+  },
+  {
+   "fieldname": "transport_section",
+   "fieldtype": "Section Break",
+   "label": "Transport Details"
+  },
+  {
+   "fieldname": "transport_company_name",
+   "fieldtype": "Data",
+   "label": "Transport Company",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "plate_number",
+   "fieldtype": "Data",
+   "label": "Plate Number",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "driver_name",
+   "fieldtype": "Data",
+   "label": "Driver Name"
+  },
+  {
+   "fieldname": "column_break_transport",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "driver_phone",
+   "fieldtype": "Data",
+   "label": "Driver Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "transporter_org",
+   "fieldtype": "Link",
+   "label": "Transporter Organisation",
+   "options": "LF Organization",
+   "description": "If transporter is on the platform"
+  },
+  {
+   "fieldname": "waybill_no",
+   "fieldtype": "Data",
+   "label": "Waybill No"
+  },
+  {
+   "fieldname": "waybill_file",
+   "fieldtype": "Attach",
+   "label": "Waybill File"
+  },
+  {
+   "fieldname": "schedule_section",
+   "fieldtype": "Section Break",
+   "label": "Schedule"
+  },
+  {
+   "fieldname": "departure_date",
+   "fieldtype": "Date",
+   "label": "Planned Departure Date"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA at Hub"
+  },
+  {
+   "fieldname": "column_break_schedule",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "departed_at",
+   "fieldtype": "Datetime",
+   "label": "Departed At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "arrived_at",
+   "fieldtype": "Datetime",
+   "label": "Arrived At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "confirmed_at",
+   "fieldtype": "Datetime",
+   "label": "Collected At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items on This Load"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Load Items",
+   "options": "LF Load Item"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF Load",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Supplier Owner",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Staff",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Buyer"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "ASC",
+ "states": [
+  {
+   "color": "Grey",
+   "title": "Planned"
+  },
+  {
+   "color": "Blue",
+   "title": "Booked"
+  },
+  {
+   "color": "Yellow",
+   "title": "Departed"
+  },
+  {
+   "color": "Purple",
+   "title": "Arrived"
+  },
+  {
+   "color": "Green",
+   "title": "Collected"
+  },
+  {
+   "color": "Red",
+   "title": "Cancelled"
+  }
+ ],
+ "title_field": "label",
+ "track_changes": 1
+}

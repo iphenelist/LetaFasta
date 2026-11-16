@@ -1,0 +1,60 @@
+{% extends "templates/web.html" %}
+
+{% block title %}My RFQs — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <div class="lf-page-header">
+    <h2>My Requests for Quotation</h2>
+    <a href="/letafasta/catalogue" class="btn btn-outline-primary btn-sm">Back to Catalogue</a>
+  </div>
+
+  {% if rfqs %}
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>RFQ</th>
+          <th>Product / Description</th>
+          <th>Qty</th>
+          <th>Hub</th>
+          <th>Quotes</th>
+          <th>Status</th>
+          <th>Expires</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rfqs %}
+        <tr>
+          <td><a href="/letafasta/rfq/{{ r.name }}">{{ r.rfq_title }}</a></td>
+          <td>{{ r.product_name or r.product_description or '—' }}</td>
+          <td>{{ r.quantity }} {{ r.unit_label }}</td>
+          <td>{{ r.hub_name }}</td>
+          <td>
+            {% if r.quote_count %}
+            <span class="badge badge-primary">{{ r.quote_count }}</span>
+            {% else %}
+            <span class="text-muted">None yet</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge badge-{{ lf_status_color(r.status) }}">{{ r.status | title }}</span>
+          </td>
+          <td class="text-muted small">{{ frappe.utils.pretty_date(r.expires_at) }}</td>
+          <td>
+            <a href="/letafasta/rfq/{{ r.name }}" class="btn btn-sm btn-outline-primary">View</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="lf-empty">
+    <p class="text-muted">No RFQs yet. Post one from the catalogue checkout.</p>
+    <a href="/letafasta/catalogue" class="btn btn-primary">Browse Catalogue</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

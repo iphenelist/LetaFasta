@@ -1,0 +1,73 @@
+{% extends "templates/web.html" %}
+{% block title %}Supplier Dashboard — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <h2>{{ org.org_name }}
+    {% if org.is_verified %}<span class="lf-verified-badge ml-2">✓ Verified</span>{% endif %}
+  </h2>
+  <p class="text-muted">{{ org.region }}</p>
+
+  {% if org.status != 'approved' %}
+  <div class="alert alert-warning">
+    Your organisation is <strong>{{ org.status }}</strong>. You cannot receive orders until it is approved by admin.
+  </div>
+  {% endif %}
+
+  <!-- Stat tiles -->
+  <div class="row mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3">
+        <div class="h3 text-primary">{{ stats.active_orders }}</div>
+        <div class="small text-muted">Active Orders</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3">
+        <div class="h3 text-warning">{{ stats.open_rfqs }}</div>
+        <div class="small text-muted">Open RFQs</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3">
+        <div class="h3 text-success">{{ org.total_orders_completed }}</div>
+        <div class="small text-muted">Completed Orders</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3">
+        <div class="h3">{% if org.avg_rating %}★ {{ "%.1f"|format(org.avg_rating) }}{% else %}—{% endif %}</div>
+        <div class="small text-muted">Avg Rating</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick nav -->
+  <div class="row mb-4">
+    <div class="col-md-4 mb-2"><a href="/letafasta/my-orders" class="btn btn-outline-primary w-100">📦 Incoming Orders</a></div>
+    <div class="col-md-4 mb-2"><a href="/letafasta/my-rfqs-in" class="btn btn-outline-primary w-100">📋 Open RFQs</a></div>
+    <div class="col-md-4 mb-2"><a href="/letafasta/my-products" class="btn btn-outline-secondary w-100">🏷 My Products</a></div>
+  </div>
+
+  <!-- Recent orders -->
+  {% if recent_orders %}
+  <h5>Recent Orders</h5>
+  <div class="table-responsive">
+    <table class="table table-sm">
+      <thead><tr><th>Order</th><th>Buyer</th><th>Hub</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for o in recent_orders %}
+        <tr>
+          <td><a href="/letafasta/order/{{ o.name }}">{{ o.name }}</a></td>
+          <td>{{ o.buyer }}</td>
+          <td>{{ o.hub_name }}</td>
+          <td>TZS {{ o.agreed_price | int }}</td>
+          <td><span class="badge badge-secondary">{{ o.status | replace('_',' ') | title }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

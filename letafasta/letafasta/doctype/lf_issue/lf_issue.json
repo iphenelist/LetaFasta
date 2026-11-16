@@ -1,0 +1,151 @@
+{
+ "actions": [],
+ "autoname": "ISS-.#####",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "order",
+  "load",
+  "type",
+  "status",
+  "column_break_1",
+  "raised_by",
+  "assigned_org",
+  "due_at",
+  "details_section",
+  "description",
+  "resolution_section",
+  "resolution_note",
+  "resolved_at",
+  "resolved_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "order",
+   "fieldtype": "Link",
+   "label": "Order",
+   "options": "LF Order",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "load",
+   "fieldtype": "Link",
+   "label": "Load (optional)",
+   "options": "LF Load"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Issue Type",
+   "options": "late\ngoods_problem\nnot_at_hub\ndetails_missing",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "open\nescalated\nresolved",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "raised_by",
+   "fieldtype": "Link",
+   "label": "Raised By",
+   "options": "User"
+  },
+  {
+   "fieldname": "assigned_org",
+   "fieldtype": "Link",
+   "label": "Assigned Organisation",
+   "options": "LF Organization"
+  },
+  {
+   "fieldname": "due_at",
+   "fieldtype": "Datetime",
+   "label": "Due At"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "resolution_section",
+   "fieldtype": "Section Break",
+   "label": "Resolution"
+  },
+  {
+   "fieldname": "resolution_note",
+   "fieldtype": "Text",
+   "label": "Resolution Note"
+  },
+  {
+   "fieldname": "resolved_at",
+   "fieldtype": "Datetime",
+   "label": "Resolved At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "resolved_by",
+   "fieldtype": "Link",
+   "label": "Resolved By",
+   "options": "User",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF Issue",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "LF Buyer",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "LF Supplier Owner",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Staff"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {"color": "Yellow", "title": "Open"},
+  {"color": "Red", "title": "Escalated"},
+  {"color": "Green", "title": "Resolved"}
+ ],
+ "track_changes": 1
+}

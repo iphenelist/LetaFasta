@@ -1,0 +1,49 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Incoming RFQs — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <h2>Open Requests for Quotation</h2>
+  <p class="text-muted">Buyers are looking for suppliers. Submit a competitive quote to win the order.</p>
+
+  {% if rfqs %}
+  <div class="row">
+    {% for r in rfqs %}
+    <div class="col-md-6 mb-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            {{ r.product_name or r.product_description or 'General Request' }}
+            {% if r.budget_per_unit %}
+            <span class="badge badge-info float-right">Budget: TZS {{ r.budget_per_unit | int }}</span>
+            {% endif %}
+          </h5>
+          <p class="card-text">
+            <strong>Quantity:</strong> {{ r.quantity }} {{ r.unit_label }}<br>
+            <strong>Delivery Hub:</strong> {{ r.hub_name }}<br>
+            {% if r.preferred_date %}
+            <strong>Preferred Date:</strong> {{ r.preferred_date }}<br>
+            {% endif %}
+            <strong>Expires:</strong> <span class="text-muted">{{ frappe.utils.pretty_date(r.expires_at) }}</span>
+          </p>
+          {% if r.already_quoted %}
+          <div class="alert alert-success py-1 mb-2 small">You already submitted a quote.</div>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          <a href="/letafasta/rfq/{{ r.name }}" class="btn btn-primary btn-sm">
+            {% if r.already_quoted %}View Your Quote{% else %}Submit Quote{% endif %}
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="lf-empty">
+    <p class="text-muted">No open RFQs right now. Check back later.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

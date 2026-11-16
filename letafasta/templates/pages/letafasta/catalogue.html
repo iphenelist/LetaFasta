@@ -1,0 +1,62 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Catalogue — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <div class="lf-page-header">
+    <h2>Product Catalogue</h2>
+    <p class="text-muted">Browse products from verified suppliers</p>
+    <div class="lf-header-actions">
+      <a href="/letafasta/rfq/new" class="btn btn-outline-primary btn-sm">
+        <i class="fa fa-plus"></i> Post an RFQ
+      </a>
+    </div>
+  </div>
+
+  {% if products %}
+  <div class="lf-product-grid">
+    {% for p in products %}
+    <div class="lf-product-card">
+      {% if p.image %}
+      <div class="lf-product-image" style="background-image:url('{{ p.image }}')"></div>
+      {% else %}
+      <div class="lf-product-image lf-product-image--placeholder">
+        <i class="fa fa-cube"></i>
+      </div>
+      {% endif %}
+      <div class="lf-product-body">
+        <div class="lf-product-supplier">
+          <a href="/letafasta/supplier-profile/{{ p.supplier_id }}" class="lf-supplier-link">
+            {{ p.supplier }}
+          </a>
+          {% if p.is_verified %}
+          <span class="lf-verified-badge" title="Verified Supplier">✓ Verified</span>
+          {% endif %}
+        </div>
+        <h4 class="lf-product-name">{{ p.product_name }}</h4>
+        <div class="lf-product-meta">
+          <span>{{ frappe.format(p.unit_price, {'fieldtype':'Currency'}) }} / {{ p.unit_label }}</span>
+          {% if p.avg_rating %}
+          <span class="lf-rating">★ {{ "%.1f"|format(p.avg_rating) }}</span>
+          {% endif %}
+        </div>
+        {% if p.stock_quantity %}
+        <div class="lf-stock text-muted small">{{ p.stock_quantity }} {{ p.unit_label }}s in stock</div>
+        {% endif %}
+      </div>
+      <div class="lf-product-actions">
+        <a href="/letafasta/product/{{ p.name }}" class="btn btn-primary btn-sm w-100">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="lf-empty">
+    <i class="fa fa-search fa-2x text-muted"></i>
+    <p class="text-muted mt-2">No products available yet. Post an RFQ to request a quote directly from suppliers.</p>
+    <a href="/letafasta/rfq/new" class="btn btn-primary">Post RFQ</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

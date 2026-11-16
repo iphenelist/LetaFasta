@@ -1,0 +1,155 @@
+{
+ "actions": [],
+ "autoname": "RFQ-QT-.#####",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rfq",
+  "supplier",
+  "status",
+  "column_break_basic",
+  "valid_until",
+  "order",
+  "pricing_section",
+  "price_per_unit",
+  "total_price",
+  "delivery_lead_days",
+  "column_break_pricing",
+  "terms"
+ ],
+ "fields": [
+  {
+   "fieldname": "rfq",
+   "fieldtype": "Link",
+   "label": "RFQ",
+   "options": "LF RFQ",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "LF Organization",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "submitted",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "submitted\naccepted\nrejected\nexpired",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "valid_until",
+   "fieldtype": "Datetime",
+   "label": "Valid Until",
+   "description": "Quote expires if not accepted by this time"
+  },
+  {
+   "fieldname": "order",
+   "fieldtype": "Link",
+   "label": "Order Created",
+   "options": "LF Order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pricing_section",
+   "fieldtype": "Section Break",
+   "label": "Pricing"
+  },
+  {
+   "fieldname": "price_per_unit",
+   "fieldtype": "Currency",
+   "label": "Price per Unit (TZS)",
+   "options": "TZS",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "total_price",
+   "fieldtype": "Currency",
+   "label": "Total Price (TZS)",
+   "options": "TZS",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivery_lead_days",
+   "fieldtype": "Int",
+   "label": "Delivery Lead Days"
+  },
+  {
+   "fieldname": "column_break_pricing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "terms",
+   "fieldtype": "Small Text",
+   "label": "Terms & Conditions",
+   "description": "Payment terms, special conditions"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF RFQ Quote",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Supplier Owner",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Buyer"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Blue",
+   "title": "Submitted"
+  },
+  {
+   "color": "Green",
+   "title": "Accepted"
+  },
+  {
+   "color": "Red",
+   "title": "Rejected"
+  },
+  {
+   "color": "Grey",
+   "title": "Expired"
+  }
+ ],
+ "title_field": "rfq",
+ "track_changes": 1
+}

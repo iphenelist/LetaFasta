@@ -1,0 +1,185 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Checkout — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <h2>Checkout</h2>
+
+  <div id="checkout-empty" class="lf-empty" style="display:none">
+    <p class="text-muted">Your cart is empty. <a href="/letafasta/catalogue">Browse catalogue</a>.</p>
+  </div>
+
+  <div id="checkout-form" style="display:none">
+    <div class="row">
+      <div class="col-md-7">
+        <!-- Hub selection -->
+        <div class="card mb-3">
+          <div class="card-header">1. Delivery Hub</div>
+          <div class="card-body">
+            <select id="hub-select" class="form-control" onchange="onHubChange()">
+              <option value="">— Select Hub —</option>
+              {% for h in hubs %}
+              <option value="{{ h.name }}">{{ h.hub_name }} ({{ h.region }})</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Path selection -->
+        <div class="card mb-3" id="path-card" style="display:none">
+          <div class="card-header">2. Order Type</div>
+          <div class="card-body">
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio" name="order_path" id="path-direct" value="direct" checked onchange="onPathChange()">
+              <label class="form-check-label" for="path-direct">
+                <strong>Direct Order</strong> — place at catalogue price now
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="order_path" id="path-rfq" value="rfq" onchange="onPathChange()">
+              <label class="form-check-label" for="path-rfq">
+                <strong>Request for Quotation (RFQ)</strong> — suppliers respond with their best price
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- RFQ notes (shown for RFQ path) -->
+        <div class="card mb-3" id="rfq-notes-card" style="display:none">
+          <div class="card-header">3. RFQ Details</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Budget per Unit (optional)</label>
+              <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text">TZS</span></div>
+                <input type="number" id="budget-per-unit" class="form-control" placeholder="Leave blank to let suppliers offer freely">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Preferred Delivery Date</label>
+              <input type="date" id="preferred-date" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Notes for suppliers</label>
+              <textarea id="rfq-notes" class="form-control" rows="2" placeholder="Any special requirements…"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <!-- Order summary -->
+        <div class="card">
+          <div class="card-header">Order Summary</div>
+          <div class="card-body" id="order-summary">
+            <p class="text-muted">Select a hub to see pricing.</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary btn-block w-100" id="place-btn" disabled onclick="placeOrder()">
+              Place Order
+            </button>
+            <div id="place-msg" class="mt-2" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var cart = [];
+try { cart = JSON.parse(localStorage.getItem('lf_cart') || '[]'); } catch(e) {}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!cart.length) {
+    document.getElementById('checkout-empty').style.display = 'block';
+  } else {
+    document.getElementById('checkout-form').style.display = 'block';
+  }
+});
+
+function onHubChange() {
+  var hub = document.getElementById('hub-select').value;
+  document.getElementById('path-card').style.display = hub ? 'block' : 'none';
+  updateSummary();
+}
+
+function onPathChange() {
+  var path = document.querySelector('input[name="order_path"]:checked').value;
+  document.getElementById('rfq-notes-card').style.display = path === 'rfq' ? 'block' : 'none';
+  document.getElementById('place-btn').textContent = path === 'rfq' ? 'Post RFQ' : 'Place Order';
+  updateSummary();
+}
+
+function updateSummary() {
+  var hub = document.getElementById('hub-select').value;
+  if (!hub) { document.getElementById('place-btn').disabled = true; return; }
+
+  var total = 0, lines = '';
+  cart.forEach(function(item) {
+    var lt = item.quantity * item.unit_price;
+    total += lt;
+    lines += '<div class="d-flex justify-content-between"><span>' + item.product_name + ' ×' + item.quantity + '</span><span>' + fmt(lt) + '</span></div>';
+  });
+  document.getElementById('order-summary').innerHTML = lines + '<hr><div class="d-flex justify-content-between"><strong>Total</strong><strong>' + fmt(total) + '</strong></div>';
+  document.getElementById('place-btn').disabled = false;
+}
+
+function fmt(v) {
+  return 'TZS ' + (v||0).toLocaleString('en-TZ', {minimumFractionDigits:0});
+}
+
+function placeOrder() {
+  var hub = document.getElementById('hub-select').value;
+  var path = document.querySelector('input[name="order_path"]:checked').value;
+  var btn = document.getElementById('place-btn');
+  var msg = document.getElementById('place-msg');
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+
+  if (path === 'rfq') {
+    // For RFQ path, post one RFQ per supplier group
+    var groups = {};
+    cart.forEach(function(item) {
+      if (!groups[item.supplier]) groups[item.supplier] = {supplier: item.supplier, items: []};
+      groups[item.supplier].items.push(item);
+    });
+    var promises = Object.values(groups).map(function(grp) {
+      var qty = grp.items.reduce(function(s,i){ return s + i.quantity; }, 0);
+      var desc = grp.items.map(function(i){ return i.quantity + ' ' + i.unit_label + '(s) ' + i.product_name; }).join(', ');
+      return frappe.call({
+        method: 'letafasta.letafasta.letafasta.api.rfq.post_rfq',
+        args: {
+          product: grp.items.length === 1 ? grp.items[0].product : null,
+          product_description: grp.items.length > 1 ? desc : null,
+          quantity: qty,
+          unit_label: grp.items[0].unit_label,
+          hub: hub,
+          budget_per_unit: document.getElementById('budget-per-unit').value || 0,
+          preferred_date: document.getElementById('preferred-date').value || null,
+          notes: document.getElementById('rfq-notes').value,
+        }
+      });
+    });
+    Promise.all(promises).then(function() {
+      localStorage.removeItem('lf_cart');
+      window.location.href = '/letafasta/my-rfqs';
+    }).catch(function(e) {
+      btn.disabled = false;
+      btn.textContent = 'Post RFQ';
+      msg.textContent = 'Error: ' + (e.message || 'Unknown error');
+      msg.style.display = 'block';
+      msg.className = 'mt-2 text-danger';
+    });
+  } else {
+    // Direct order path — Phase 3 will implement create_order API
+    msg.textContent = 'Direct orders will be enabled in Phase 3.';
+    msg.style.display = 'block';
+    msg.className = 'mt-2 text-info';
+    btn.disabled = false;
+    btn.textContent = 'Place Order';
+  }
+}
+</script>
+{% endblock %}

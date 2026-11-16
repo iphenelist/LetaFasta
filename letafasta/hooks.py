@@ -1,9 +1,18 @@
 app_name = "letafasta"
 app_title = "LetaFasta"
 app_publisher = "Innocent P M"
-app_description = "LetaFasta"
+app_description = "B2B bulk-materials procurement and last-mile freight marketplace for Tanzania"
 app_email = "innocentphenelist@gmail.com"
 app_license = "mit"
+
+add_to_apps_screen = [
+    {
+        "name": "letafasta",
+        "logo": "/assets/letafasta/images/logo.svg",
+        "title": "LetaFasta",
+        "route": "/letafasta",
+    }
+]
 
 # Apps
 # ------------------
@@ -60,9 +69,12 @@ app_license = "mit"
 # home_page = "login"
 
 # website user home page (by Role)
-# role_home_page = {
-# 	"Role": "home_page"
-# }
+role_home_page = {
+    "LF Admin": "app/letafasta-admin",
+    "LF Buyer": "letafasta/orders",
+    "LF Supplier Owner": "letafasta/supplier",
+    "LF Supplier Staff": "letafasta/my-orders",
+}
 
 # Generators
 # ----------
@@ -72,6 +84,12 @@ app_license = "mit"
 
 # automatically load and sync documents of this doctype from downstream apps
 # importable_doctypes = [doctype_1]
+
+# Fixtures — exported documents synced by migrate / bench import-fixtures
+# Workspace omitted: created via Python console; fixture import fails on 'type' mandatory field.
+fixtures = [
+    {"dt": "Workflow", "filters": [["document_type", "in", ["LF Organization"]]]},
+]
 
 # Jinja
 # ----------
@@ -148,6 +166,17 @@ app_license = "mit"
 
 # Scheduled Tasks
 # ---------------
+
+scheduler_events = {
+    # SMS queue — flush every minute
+    "cron": {
+        "* * * * *": ["letafasta.letafasta.tasks.flush_sms_queue"],
+    },
+    # Business logic — expire orders/RFQs, auto-confirm, escalate issues
+    "all": [
+        "letafasta.letafasta.tasks.run_scheduled_jobs",
+    ],
+}
 
 # scheduler_events = {
 # 	"all": [

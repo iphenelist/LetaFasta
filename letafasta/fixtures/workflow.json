@@ -1,0 +1,68 @@
+[
+ {
+  "doctype": "Workflow",
+  "document_type": "LF Organization",
+  "is_active": 1,
+  "name": "LF Organization Approval",
+  "override_status": 0,
+  "send_email_alert": 0,
+  "states": [
+   {
+    "allow_edit": "LF Admin",
+    "doc_status": "0",
+    "is_optional_state": 0,
+    "state": "Pending",
+    "update_field": "status",
+    "update_value": "pending"
+   },
+   {
+    "allow_edit": "LF Admin",
+    "doc_status": "0",
+    "is_optional_state": 0,
+    "state": "Approved",
+    "update_field": "status",
+    "update_value": "approved"
+   },
+   {
+    "allow_edit": "LF Admin",
+    "doc_status": "0",
+    "is_optional_state": 0,
+    "state": "Suspended",
+    "update_field": "status",
+    "update_value": "suspended"
+   }
+  ],
+  "transitions": [
+   {
+    "action": "Approve",
+    "allow_self_approval": 1,
+    "allowed": "LF Admin",
+    "next_state": "Approved",
+    "state": "Pending"
+   },
+   {
+    "action": "Reject / Suspend",
+    "allow_self_approval": 1,
+    "allowed": "LF Admin",
+    "next_state": "Suspended",
+    "state": "Pending"
+   },
+   {
+    "action": "Suspend",
+    "allow_self_approval": 1,
+    "allowed": "LF Admin",
+    "next_state": "Suspended",
+    "state": "Approved"
+   },
+   {
+    "action": "Reinstate",
+    "allow_self_approval": 1,
+    "allowed": "LF Admin",
+    "next_state": "Approved",
+    "state": "Suspended"
+   }
+  ],
+  "workflow_name": "LF Organization Approval",
+  "workflow_state_field": "workflow_state"
+ }
+]

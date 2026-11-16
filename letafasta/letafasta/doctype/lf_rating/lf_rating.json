@@ -1,0 +1,111 @@
+{
+ "actions": [],
+ "autoname": "RAT-.#####",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "order",
+  "buyer",
+  "supplier",
+  "column_break_1",
+  "quality_rating",
+  "punctuality_rating",
+  "communication_rating",
+  "overall_rating",
+  "comment_section",
+  "comment"
+ ],
+ "fields": [
+  {
+   "fieldname": "order",
+   "fieldtype": "Link",
+   "label": "Order",
+   "options": "LF Order",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "buyer",
+   "fieldtype": "Link",
+   "label": "Buyer",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "LF Organization",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quality_rating",
+   "fieldtype": "Rating",
+   "label": "Quality",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "punctuality_rating",
+   "fieldtype": "Rating",
+   "label": "Punctuality"
+  },
+  {
+   "fieldname": "communication_rating",
+   "fieldtype": "Rating",
+   "label": "Communication"
+  },
+  {
+   "fieldname": "overall_rating",
+   "fieldtype": "Float",
+   "label": "Overall Rating",
+   "precision": "1",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "comment_section",
+   "fieldtype": "Section Break",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "comment",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF Rating",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "LF Buyer"
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Owner"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

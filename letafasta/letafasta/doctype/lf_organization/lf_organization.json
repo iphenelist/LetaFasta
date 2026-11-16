@@ -1,0 +1,289 @@
+{
+ "actions": [],
+ "autoname": "field:org_name",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "org_name",
+  "type",
+  "column_break_basic",
+  "status",
+  "workflow_state",
+  "status_note",
+  "identity_section",
+  "phone_number",
+  "region",
+  "column_break_identity",
+  "tin",
+  "address",
+  "coordinates_section",
+  "latitude",
+  "longitude",
+  "approval_section",
+  "is_verified",
+  "approved_at",
+  "column_break_approval",
+  "approved_by",
+  "supplier_settings_section",
+  "delivery_lead_days",
+  "commission_rate",
+  "freight_rates_section",
+  "freight_rates",
+  "stats_section",
+  "avg_rating",
+  "total_orders_completed",
+  "members_section",
+  "members",
+  "licences_section",
+  "licence_attachments"
+ ],
+ "fields": [
+  {
+   "fieldname": "org_name",
+   "fieldtype": "Data",
+   "label": "Organisation Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "supplier\ntransporter\nhub_operator\nletapro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "pending\napproved\nsuspended",
+   "reqd": 1
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Data",
+   "label": "Workflow State",
+   "read_only": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "status_note",
+   "fieldtype": "Small Text",
+   "label": "Status Note"
+  },
+  {
+   "fieldname": "identity_section",
+   "fieldtype": "Section Break",
+   "label": "Identity"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "label": "Region"
+  },
+  {
+   "fieldname": "column_break_identity",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tin",
+   "fieldtype": "Data",
+   "label": "TIN"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "coordinates_section",
+   "fieldtype": "Section Break",
+   "label": "Location (for freight rate suggestion)"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "approval_section",
+   "fieldtype": "Section Break",
+   "label": "Approval"
+  },
+  {
+   "default": "0",
+   "description": "Set by admin after reviewing TIN and licence documents. Shows a Verified badge in the catalogue.",
+   "fieldname": "is_verified",
+   "fieldtype": "Check",
+   "label": "Verified Supplier"
+  },
+  {
+   "fieldname": "approved_at",
+   "fieldtype": "Datetime",
+   "label": "Approved At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_approval",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.type=='supplier'",
+   "fieldname": "supplier_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Supplier Settings"
+  },
+  {
+   "default": "3",
+   "description": "Default lead time shown in catalogue (days)",
+   "fieldname": "delivery_lead_days",
+   "fieldtype": "Int",
+   "label": "Delivery Lead Days"
+  },
+  {
+   "default": "0",
+   "description": "Supplier margin % shown to buyers",
+   "fieldname": "commission_rate",
+   "fieldtype": "Percent",
+   "label": "Commission Rate (%)"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.type=='supplier'",
+   "fieldname": "freight_rates_section",
+   "fieldtype": "Section Break",
+   "label": "Freight Rates per Hub"
+  },
+  {
+   "fieldname": "freight_rates",
+   "fieldtype": "Table",
+   "label": "Freight Rates",
+   "options": "LF Freight Rate"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "stats_section",
+   "fieldtype": "Section Break",
+   "label": "Statistics"
+  },
+  {
+   "fieldname": "avg_rating",
+   "fieldtype": "Float",
+   "label": "Average Rating",
+   "precision": "1",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_orders_completed",
+   "fieldtype": "Int",
+   "label": "Orders Completed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "members_section",
+   "fieldtype": "Section Break",
+   "label": "Members"
+  },
+  {
+   "fieldname": "members",
+   "fieldtype": "Table",
+   "label": "Members",
+   "options": "LF Organization Member"
+  },
+  {
+   "fieldname": "licences_section",
+   "fieldtype": "Section Break",
+   "label": "Licence Documents"
+  },
+  {
+   "fieldname": "licence_attachments",
+   "fieldtype": "Table",
+   "label": "Licence Attachments",
+   "options": "LF Organization Licence"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF Organization",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Supplier Owner",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Buyer"
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Staff"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Yellow",
+   "title": "Pending"
+  },
+  {
+   "color": "Green",
+   "title": "Approved"
+  },
+  {
+   "color": "Red",
+   "title": "Suspended"
+  }
+ ],
+ "title_field": "org_name",
+ "track_changes": 1
+}

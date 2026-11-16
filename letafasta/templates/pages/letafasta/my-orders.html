@@ -1,0 +1,51 @@
+{% extends "templates/web.html" %}
+{% block title %}My Orders — LetaFasta Supplier{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <div class="lf-page-header">
+    <h2>Incoming Orders</h2>
+    <a href="/letafasta/supplier" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+  </div>
+
+  {% if orders %}
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Order</th><th>Buyer</th><th>Hub</th><th>Amount</th>
+          <th>Loads</th><th>Status</th><th>Date</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td><a href="/letafasta/order/{{ o.name }}"><strong>{{ o.name }}</strong></a></td>
+          <td>{{ o.buyer }}</td>
+          <td>{{ o.hub_name }}</td>
+          <td>TZS {{ o.agreed_price | int }}</td>
+          <td>
+            <span class="badge badge-secondary">{{ o.load_count }}</span>
+            {% if o.booked_count %}
+            <span class="text-primary small ml-1">{{ o.booked_count }} booked</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge badge-{{ lf_status_color(o.status) }}">
+              {{ o.status | replace('_',' ') | title }}
+            </span>
+          </td>
+          <td class="text-muted small">{{ o.creation.strftime('%d %b') if o.creation else '' }}</td>
+          <td><a href="/letafasta/order/{{ o.name }}" class="btn btn-sm btn-outline-primary">Manage</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="lf-empty">
+    <p class="text-muted">No orders yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

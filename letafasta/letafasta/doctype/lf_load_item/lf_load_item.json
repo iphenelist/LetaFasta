@@ -1,0 +1,36 @@
+{
+ "actions": [],
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "order_item",
+  "quantity"
+ ],
+ "fields": [
+  {
+   "fieldname": "order_item",
+   "fieldtype": "Link",
+   "label": "Order Item",
+   "options": "LF Order Item",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "label": "Quantity",
+   "reqd": 1,
+   "in_list_view": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF Load Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC"
+}

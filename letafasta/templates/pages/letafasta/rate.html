@@ -1,0 +1,128 @@
+{% extends "templates/web.html" %}
+{% block title %}Rate {{ supplier.org_name }} — LetaFasta{% endblock %}
+{% block page_content %}
+<div class="lf-page" style="max-width:600px;margin:auto">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/letafasta/orders">My Orders</a></li>
+      <li class="breadcrumb-item"><a href="/letafasta/order/{{ order.name }}">{{ order.name }}</a></li>
+      <li class="breadcrumb-item active">Rate Supplier</li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <div class="card-header">
+      <h4 class="mb-0">Rate Your Experience</h4>
+      <div class="text-muted small">
+        {{ supplier.org_name }}
+        {% if supplier.is_verified %}<span class="lf-verified-badge ml-1">✓ Verified</span>{% endif %}
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="rating-form">
+        <div class="form-group mb-4">
+          <label><strong>Product / Goods Quality</strong></label>
+          <div class="lf-star-row" data-field="quality">
+            {% for i in range(1,6) %}<span class="lf-star" data-value="{{ i }}">★</span>{% endfor %}
+          </div>
+          <input type="hidden" id="quality_rating" value="0">
+        </div>
+
+        <div class="form-group mb-4">
+          <label><strong>Delivery Punctuality</strong></label>
+          <div class="lf-star-row" data-field="punctuality">
+            {% for i in range(1,6) %}<span class="lf-star" data-value="{{ i }}">★</span>{% endfor %}
+          </div>
+          <input type="hidden" id="punctuality_rating" value="0">
+        </div>
+
+        <div class="form-group mb-4">
+          <label><strong>Communication</strong></label>
+          <div class="lf-star-row" data-field="communication">
+            {% for i in range(1,6) %}<span class="lf-star" data-value="{{ i }}">★</span>{% endfor %}
+          </div>
+          <input type="hidden" id="communication_rating" value="0">
+        </div>
+
+        <div class="form-group mb-4">
+          <label>Comment <span class="text-muted">(optional)</span></label>
+          <textarea id="comment" class="form-control" rows="3"
+            placeholder="Describe your experience with this supplier…"></textarea>
+        </div>
+
+        <div id="rating-error" class="alert alert-danger d-none"></div>
+
+        <div class="d-flex justify-content-between">
+          <a href="/letafasta/order/{{ order.name }}" class="btn btn-outline-secondary">Skip</a>
+          <button class="btn btn-success" onclick="submitRating()">Submit Rating</button>
+        </div>
+      </div>
+
+      <div id="rating-thanks" class="text-center d-none py-4">
+        <i class="fa fa-check-circle fa-3x text-success mb-3"></i>
+        <h5>Thank you for your feedback!</h5>
+        <p class="text-muted">Your rating helps buyers make informed decisions.</p>
+        <a href="/letafasta/orders" class="btn btn-primary">Back to Orders</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.lf-star-row { font-size: 2rem; cursor: pointer; color: #ccc; }
+.lf-star { transition: color 0.1s; }
+.lf-star.active, .lf-star.hover { color: #f5a623; }
+</style>
+
+<script>
+document.querySelectorAll('.lf-star-row').forEach(function(row) {
+  var field = row.dataset.field;
+  var stars = row.querySelectorAll('.lf-star');
+  stars.forEach(function(star, idx) {
+    star.addEventListener('mouseenter', function() {
+      stars.forEach(function(s, i) { s.classList.toggle('hover', i <= idx); });
+    });
+    star.addEventListener('mouseleave', function() {
+      stars.forEach(function(s) { s.classList.remove('hover'); });
+    });
+    star.addEventListener('click', function() {
+      var val = parseInt(star.dataset.value);
+      document.getElementById(field + '_rating').value = val;
+      stars.forEach(function(s, i) { s.classList.toggle('active', i < val); });
+    });
+  });
+});
+
+function submitRating() {
+  var q = parseInt(document.getElementById('quality_rating').value);
+  var p = parseInt(document.getElementById('punctuality_rating').value);
+  var c = parseInt(document.getElementById('communication_rating').value);
+  var comment = document.getElementById('comment').value;
+  var err = document.getElementById('rating-error');
+
+  if (!q || !p || !c) {
+    err.textContent = 'Please rate all three categories.';
+    err.classList.remove('d-none');
+    return;
+  }
+  err.classList.add('d-none');
+
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.rating.submit_rating',
+    args: {
+      order: '{{ order.name }}',
+      quality_rating: q,
+      punctuality_rating: p,
+      communication_rating: c,
+      comment: comment,
+    },
+    callback: function(r) {
+      if (r.message) {
+        document.getElementById('rating-form').classList.add('d-none');
+        document.getElementById('rating-thanks').classList.remove('d-none');
+      }
+    }
+  });
+}
+</script>
+{% endblock %}

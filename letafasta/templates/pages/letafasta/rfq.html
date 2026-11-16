@@ -1,0 +1,169 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ rfq.rfq_title }} — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/letafasta/my-rfqs">My RFQs</a></li>
+      <li class="breadcrumb-item active">{{ rfq.rfq_title }}</li>
+    </ol>
+  </nav>
+
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h2>{{ rfq.rfq_title }}
+        <span class="badge badge-{{ status_color }} ml-2" style="font-size:0.6em;vertical-align:middle">{{ rfq.status | title }}</span>
+      </h2>
+      <dl class="row">
+        <dt class="col-sm-3">Product</dt>
+        <dd class="col-sm-9">{{ rfq.product_name or rfq.product_description or '—' }}</dd>
+        <dt class="col-sm-3">Quantity</dt>
+        <dd class="col-sm-9">{{ rfq.quantity }} {{ rfq.unit_label }}</dd>
+        <dt class="col-sm-3">Delivery Hub</dt>
+        <dd class="col-sm-9">{{ rfq.hub_name }}</dd>
+        {% if rfq.budget_per_unit %}
+        <dt class="col-sm-3">Your Budget</dt>
+        <dd class="col-sm-9">TZS {{ rfq.budget_per_unit | int | string }} / {{ rfq.unit_label }}</dd>
+        {% endif %}
+        {% if rfq.preferred_date %}
+        <dt class="col-sm-3">Preferred Date</dt>
+        <dd class="col-sm-9">{{ rfq.preferred_date }}</dd>
+        {% endif %}
+        <dt class="col-sm-3">Expires</dt>
+        <dd class="col-sm-9">{{ frappe.utils.pretty_date(rfq.expires_at) }}</dd>
+      </dl>
+    </div>
+    <div class="col-md-4 text-right">
+      {% if rfq.status in ('open', 'quoted') and is_buyer %}
+      <button class="btn btn-outline-danger btn-sm" onclick="cancelRFQ('{{ rfq.name }}')">Cancel RFQ</button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if is_buyer %}
+  <!-- Buyer view: compare incoming quotes -->
+  <h4>Quotes Received ({{ quotes | length }})</h4>
+  {% if quotes %}
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Supplier</th>
+          <th>Price / Unit</th>
+          <th>Total Price</th>
+          <th>Lead Days</th>
+          <th>Valid Until</th>
+          <th>Terms</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for q in quotes %}
+        <tr class="{% if q.status == 'accepted' %}table-success{% endif %}">
+          <td>{{ q.supplier }}</td>
+          <td><strong>TZS {{ q.price_per_unit | int | string }}</strong></td>
+          <td>TZS {{ q.total_price | int | string }}</td>
+          <td>{{ q.delivery_lead_days }} days</td>
+          <td class="small text-muted">{{ frappe.utils.pretty_date(q.valid_until) }}</td>
+          <td class="small">{{ q.terms or '—' }}</td>
+          <td>
+            {% if rfq.status in ('open', 'quoted') and q.status == 'submitted' %}
+            <button class="btn btn-success btn-sm" onclick="acceptQuote('{{ q.name }}')">Accept</button>
+            {% elif q.status == 'accepted' %}
+            <span class="badge badge-success">Accepted</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-muted">No quotes yet. Suppliers will respond within 24 hours.</div>
+  {% endif %}
+
+  {% elif is_supplier %}
+  <!-- Supplier view: submit a quote -->
+  {% if can_quote %}
+  <div class="card">
+    <div class="card-header">Submit Your Quote</div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label>Price per {{ rfq.unit_label }} (TZS)</label>
+          <input type="number" id="q-price" class="form-control" placeholder="e.g. 28500">
+        </div>
+        <div class="form-group col-md-3">
+          <label>Lead Days</label>
+          <input type="number" id="q-lead" class="form-control" value="3">
+        </div>
+        <div class="form-group col-md-5">
+          <label>Terms (optional)</label>
+          <input type="text" id="q-terms" class="form-control" placeholder="Payment terms, conditions">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="submitQuote('{{ rfq.name }}')">Submit Quote</button>
+      <div id="quote-msg" class="mt-2" style="display:none"></div>
+    </div>
+  </div>
+  {% elif already_quoted %}
+  <div class="alert alert-info">You have already submitted a quote for this RFQ.</div>
+  {% else %}
+  <div class="alert alert-secondary">This RFQ is no longer open for quotes.</div>
+  {% endif %}
+  {% endif %}
+</div>
+
+<script>
+function acceptQuote(quoteName) {
+  if (!confirm('Accept this quote and create an order?')) return;
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.rfq.accept_quote',
+    args: {quote_name: quoteName},
+    callback: function(r) {
+      if (r.message && r.message.order) {
+        window.location.href = '/letafasta/order/' + r.message.order;
+      }
+    }
+  });
+}
+
+function submitQuote(rfqName) {
+  var price = document.getElementById('q-price').value;
+  var lead = document.getElementById('q-lead').value;
+  var terms = document.getElementById('q-terms').value;
+  var msg = document.getElementById('quote-msg');
+  if (!price) { alert('Please enter a price.'); return; }
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.rfq.submit_quote',
+    args: {rfq: rfqName, price_per_unit: price, delivery_lead_days: lead, terms: terms},
+    callback: function(r) {
+      if (r.message) {
+        msg.textContent = 'Quote submitted successfully!';
+        msg.className = 'mt-2 text-success';
+        msg.style.display = 'block';
+        setTimeout(function(){ location.reload(); }, 1500);
+      }
+    },
+    error: function(r) {
+      msg.textContent = r._server_messages || 'Failed to submit quote.';
+      msg.className = 'mt-2 text-danger';
+      msg.style.display = 'block';
+    }
+  });
+}
+
+function cancelRFQ(rfqName) {
+  if (!confirm('Cancel this RFQ?')) return;
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.rfq.cancel_rfq',
+    args: {rfq: rfqName},
+    callback: function(r) {
+      if (r.message) location.reload();
+    }
+  });
+}
+</script>
+{% endblock %}

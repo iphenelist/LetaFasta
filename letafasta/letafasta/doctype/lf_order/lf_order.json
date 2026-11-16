@@ -1,0 +1,229 @@
+{
+ "actions": [],
+ "autoname": "LET-.#####",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "reference",
+  "buyer",
+  "supplier",
+  "status",
+  "column_break_basic",
+  "hub",
+  "rfq",
+  "expires_at",
+  "checkout_id",
+  "pricing_section",
+  "agreed_price",
+  "total_weight_kg",
+  "rate_per_tonne",
+  "column_break_pricing",
+  "payment_terms",
+  "payment_recorded",
+  "items_section",
+  "items",
+  "cancel_section",
+  "cancel_reason",
+  "cancelled_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "label": "Reference",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_global_search": 1
+  },
+  {
+   "fieldname": "buyer",
+   "fieldtype": "Link",
+   "label": "Buyer",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "LF Organization",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "confirmed",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "confirmed\nin_progress\npartly_collected\ncompleted\ncancelled",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hub",
+   "fieldtype": "Link",
+   "label": "Delivery Hub",
+   "options": "LF Hub",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rfq",
+   "fieldtype": "Link",
+   "label": "From RFQ",
+   "options": "LF RFQ",
+   "description": "Source RFQ (blank for direct orders)"
+  },
+  {
+   "fieldname": "expires_at",
+   "fieldtype": "Datetime",
+   "label": "Expires At",
+   "description": "Order expires 24h after creation if no load is booked"
+  },
+  {
+   "fieldname": "checkout_id",
+   "fieldtype": "Data",
+   "label": "Checkout ID",
+   "description": "Groups orders from same multi-supplier cart"
+  },
+  {
+   "fieldname": "pricing_section",
+   "fieldtype": "Section Break",
+   "label": "Pricing & Payment"
+  },
+  {
+   "fieldname": "agreed_price",
+   "fieldtype": "Currency",
+   "label": "Agreed Price (TZS)",
+   "options": "TZS",
+   "in_list_view": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_weight_kg",
+   "fieldtype": "Int",
+   "label": "Total Weight (kg)"
+  },
+  {
+   "fieldname": "rate_per_tonne",
+   "fieldtype": "Currency",
+   "label": "Freight Rate per Tonne (TZS)",
+   "options": "TZS"
+  },
+  {
+   "fieldname": "column_break_pricing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_terms",
+   "fieldtype": "Small Text",
+   "label": "Payment Terms",
+   "description": "Off-platform payment agreement"
+  },
+  {
+   "default": "0",
+   "fieldname": "payment_recorded",
+   "fieldtype": "Check",
+   "label": "Payment Recorded",
+   "description": "Either party marks this after off-platform payment"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Order Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "LF Order Item"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "cancel_section",
+   "fieldtype": "Section Break",
+   "label": "Cancellation"
+  },
+  {
+   "fieldname": "cancel_reason",
+   "fieldtype": "Small Text",
+   "label": "Cancellation Reason"
+  },
+  {
+   "fieldname": "cancelled_at",
+   "fieldtype": "Datetime",
+   "label": "Cancelled At",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF Order",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Buyer",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "LF Supplier Owner",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Staff"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Green",
+   "title": "Confirmed"
+  },
+  {
+   "color": "Blue",
+   "title": "In Progress"
+  },
+  {
+   "color": "Yellow",
+   "title": "Partly Collected"
+  },
+  {
+   "color": "Purple",
+   "title": "Completed"
+  },
+  {
+   "color": "Red",
+   "title": "Cancelled"
+  }
+ ],
+ "title_field": "reference",
+ "track_changes": 1
+}

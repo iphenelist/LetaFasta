@@ -1,0 +1,97 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ product.product_name }} — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/letafasta/catalogue">Catalogue</a></li>
+      <li class="breadcrumb-item active">{{ product.product_name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-md-5">
+      {% if product.image %}
+      <img src="{{ product.image }}" class="img-fluid rounded" alt="{{ product.product_name }}">
+      {% else %}
+      <div class="lf-product-image-placeholder rounded d-flex align-items-center justify-content-center bg-light" style="height:300px">
+        <i class="fa fa-cube fa-4x text-muted"></i>
+      </div>
+      {% endif %}
+    </div>
+    <div class="col-md-7">
+      <div class="lf-supplier-info mb-2">
+        <a href="/letafasta/supplier/{{ supplier.name }}">{{ supplier.org_name }}</a>
+        {% if supplier.is_verified %}
+        <span class="lf-verified-badge">✓ Verified</span>
+        {% endif %}
+        {% if supplier.avg_rating %}
+        <span class="lf-rating ml-2">★ {{ "%.1f"|format(supplier.avg_rating) }}</span>
+        {% endif %}
+      </div>
+      <h2>{{ product.product_name }}</h2>
+      <div class="lf-price h4 text-primary mb-1">
+        {{ frappe.format(product.unit_price, {'fieldtype':'Currency'}) }}
+        <span class="text-muted h6">/ {{ product.unit_label }}</span>
+      </div>
+      {% if product.unit_weight_kg %}
+      <div class="text-muted mb-2">Weight: {{ product.unit_weight_kg }} kg per {{ product.unit_label }}</div>
+      {% endif %}
+      {% if product.stock_quantity %}
+      <div class="mb-3">
+        <span class="badge badge-success">{{ product.stock_quantity }} {{ product.unit_label }}s available</span>
+      </div>
+      {% endif %}
+
+      {% if product.description %}
+      <div class="lf-description mb-4">{{ product.description }}</div>
+      {% endif %}
+
+      <div class="lf-product-actions d-flex gap-2">
+        <div class="input-group" style="max-width:160px">
+          <input type="number" id="qty" class="form-control" value="1" min="1" placeholder="Qty">
+          <div class="input-group-append">
+            <span class="input-group-text">{{ product.unit_label }}</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="addToCart()">Add to Cart</button>
+        <a href="/letafasta/rfq/new?product={{ product.name }}" class="btn btn-outline-secondary">
+          Request Quote (RFQ)
+        </a>
+      </div>
+
+      <div id="cart-msg" class="mt-2" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function addToCart() {
+  var qty = parseInt(document.getElementById('qty').value) || 1;
+  var cart = JSON.parse(localStorage.getItem('lf_cart') || '[]');
+  var idx = cart.findIndex(function(i){ return i.product === '{{ product.name }}'; });
+  if (idx >= 0) {
+    cart[idx].quantity += qty;
+  } else {
+    cart.push({
+      product: '{{ product.name }}',
+      product_name: '{{ product.product_name | replace("'", "\\'") }}',
+      supplier: '{{ supplier.name }}',
+      supplier_name: '{{ supplier.org_name | replace("'", "\\'") }}',
+      unit_label: '{{ product.unit_label }}',
+      unit_price: {{ product.unit_price or 0 }},
+      unit_weight_kg: {{ product.unit_weight_kg or 0 }},
+      quantity: qty
+    });
+  }
+  localStorage.setItem('lf_cart', JSON.stringify(cart));
+  var msg = document.getElementById('cart-msg');
+  msg.textContent = qty + ' {{ product.unit_label }}(s) added to cart.';
+  msg.style.display = 'block';
+  msg.className = 'mt-2 text-success';
+  setTimeout(function(){ msg.style.display='none'; }, 3000);
+}
+</script>
+{% endblock %}

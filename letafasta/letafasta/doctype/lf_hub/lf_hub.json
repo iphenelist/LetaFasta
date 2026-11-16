@@ -1,0 +1,115 @@
+{
+ "actions": [],
+ "autoname": "field:hub_name",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "hub_name",
+  "region",
+  "column_break_basic",
+  "is_active",
+  "organization",
+  "location_section",
+  "address",
+  "column_break_location",
+  "latitude",
+  "longitude"
+ ],
+ "fields": [
+  {
+   "fieldname": "hub_name",
+   "fieldtype": "Data",
+   "label": "Hub Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Region",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Active"
+  },
+  {
+   "description": "Leave blank for Letapro-managed hubs. Set for phase-2 hub operator organisations.",
+   "fieldname": "organization",
+   "fieldtype": "Link",
+   "label": "Hub Operator Organisation",
+   "options": "LF Organization"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "column_break_location",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LF Hub",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LF Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LF Buyer"
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Owner"
+  },
+  {
+   "read": 1,
+   "role": "LF Supplier Staff"
+  }
+ ],
+ "sort_field": "hub_name",
+ "sort_order": "ASC",
+ "states": [],
+ "title_field": "hub_name",
+ "track_changes": 1
+}

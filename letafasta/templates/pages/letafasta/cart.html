@@ -1,0 +1,87 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Cart — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <h2>Your Cart</h2>
+
+  <div id="cart-empty" class="lf-empty" style="display:none">
+    <i class="fa fa-shopping-cart fa-2x text-muted"></i>
+    <p class="text-muted mt-2">Your cart is empty.</p>
+    <a href="/letafasta/catalogue" class="btn btn-primary">Browse Catalogue</a>
+  </div>
+
+  <div id="cart-content" style="display:none">
+    <div id="cart-groups"></div>
+    <div class="lf-cart-summary mt-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <strong>Total: </strong><span id="cart-total"></span>
+        </div>
+        <a href="/letafasta/checkout" class="btn btn-primary btn-lg">
+          Proceed to Checkout
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var cart = JSON.parse(localStorage.getItem('lf_cart') || '[]');
+  if (!cart.length) {
+    document.getElementById('cart-empty').style.display = 'block';
+    return;
+  }
+  document.getElementById('cart-content').style.display = 'block';
+
+  // group by supplier
+  var groups = {};
+  cart.forEach(function(item) {
+    if (!groups[item.supplier]) groups[item.supplier] = {name: item.supplier_name, items: []};
+    groups[item.supplier].items.push(item);
+  });
+
+  var totalAmt = 0;
+  var html = '';
+  Object.entries(groups).forEach(function([suppId, grp]) {
+    html += '<div class="lf-cart-group card mb-3"><div class="card-header"><strong>' + grp.name + '</strong></div><div class="card-body">';
+    html += '<table class="table table-sm mb-0"><thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th><th></th></tr></thead><tbody>';
+    grp.items.forEach(function(item) {
+      var lineTotal = item.quantity * item.unit_price;
+      totalAmt += lineTotal;
+      html += '<tr>';
+      html += '<td><a href="/letafasta/product/' + item.product + '">' + item.product_name + '</a></td>';
+      html += '<td><input type="number" class="form-control form-control-sm" value="' + item.quantity + '" min="1" style="width:70px" onchange="updateQty(\'' + item.product + '\', this.value)"></td>';
+      html += '<td>' + frappe_currency(item.unit_price) + ' / ' + item.unit_label + '</td>';
+      html += '<td>' + frappe_currency(lineTotal) + '</td>';
+      html += '<td><button class="btn btn-sm btn-outline-danger" onclick="removeItem(\'' + item.product + '\')"><i class="fa fa-trash"></i></button></td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div></div>';
+  });
+  document.getElementById('cart-groups').innerHTML = html;
+  document.getElementById('cart-total').textContent = frappe_currency(totalAmt);
+});
+
+function frappe_currency(v) {
+  return 'TZS ' + (v || 0).toLocaleString('en-TZ', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+
+function updateQty(productId, newQty) {
+  var cart = JSON.parse(localStorage.getItem('lf_cart') || '[]');
+  var idx = cart.findIndex(function(i){ return i.product === productId; });
+  if (idx >= 0) cart[idx].quantity = parseInt(newQty) || 1;
+  localStorage.setItem('lf_cart', JSON.stringify(cart));
+  location.reload();
+}
+
+function removeItem(productId) {
+  var cart = JSON.parse(localStorage.getItem('lf_cart') || '[]');
+  cart = cart.filter(function(i){ return i.product !== productId; });
+  localStorage.setItem('lf_cart', JSON.stringify(cart));
+  location.reload();
+}
+</script>
+{% endblock %}

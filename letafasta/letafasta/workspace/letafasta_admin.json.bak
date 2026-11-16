@@ -1,0 +1,54 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "content": "[{\"id\":\"quick_list_1\",\"type\":\"quick_list\",\"data\":{\"doctype\":\"LF Organization\",\"label\":\"Pending Approvals\",\"count\":5,\"filters\":\"[[\\\"LF Organization\\\",\\\"status\\\",\\\"=\\\",\\\"pending\\\"]]\"}},{\"id\":\"quick_list_2\",\"type\":\"quick_list\",\"data\":{\"doctype\":\"LF Issue\",\"label\":\"Open Issues\",\"count\":5,\"filters\":\"[[\\\"LF Issue\\\",\\\"status\\\",\\\"in\\\",\\\"open,escalated\\\"]]\"}},{\"id\":\"shortcut_1\",\"type\":\"shortcut\",\"data\":{\"label\":\"LF Hub\",\"icon\":\"map-pin\",\"format\":\"\",\"link_to\":\"LF Hub\",\"type\":\"DocType\"}},{\"id\":\"shortcut_2\",\"type\":\"shortcut\",\"data\":{\"label\":\"Platform Settings\",\"icon\":\"settings\",\"format\":\"\",\"link_to\":\"LF Platform Settings\",\"type\":\"DocType\"}},{\"id\":\"shortcut_3\",\"type\":\"shortcut\",\"data\":{\"label\":\"Organisations\",\"icon\":\"building\",\"format\":\"\",\"link_to\":\"LF Organization\",\"type\":\"DocType\"}}]",
+ "creation": "2026-11-16 00:00:00.000000",
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "truck",
+ "is_hidden": 0,
+ "label": "LetaFasta Admin",
+ "modified": "2026-11-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LetaFasta",
+ "name": "LetaFasta Admin",
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "LF Admin"
+  }
+ ],
+ "sequence_id": 1,
+ "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "",
+   "icon": "map-pin",
+   "label": "LF Hub",
+   "link_to": "LF Hub",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "icon": "settings",
+   "label": "Platform Settings",
+   "link_to": "LF Platform Settings",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "icon": "building",
+   "label": "Organisations",
+   "link_to": "LF Organization",
+   "type": "DocType"
+  }
+ ],
+ "title": "LetaFasta Admin",
+ "type": "Workspace"
+}

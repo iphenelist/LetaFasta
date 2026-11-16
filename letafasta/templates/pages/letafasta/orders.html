@@ -1,0 +1,73 @@
+{% extends "templates/web.html" %}
+{% block title %}My Orders — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <div class="lf-page-header">
+    <h2>My Orders</h2>
+    <a href="/letafasta/catalogue" class="btn btn-outline-primary btn-sm">Browse Catalogue</a>
+  </div>
+
+  {% if orders %}
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Supplier</th>
+          <th>Hub</th>
+          <th>Total</th>
+          <th>Loads</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td><a href="/letafasta/order/{{ o.name }}"><strong>{{ o.name }}</strong></a></td>
+          <td>{{ o.supplier_name }}</td>
+          <td>{{ o.hub_name }}</td>
+          <td>TZS {{ o.agreed_price | int | string }}</td>
+          <td>
+            <span class="badge badge-secondary">{{ o.load_count }}</span>
+            {% if o.collected_count %}<span class="text-success small ml-1">{{ o.collected_count }} collected</span>{% endif %}
+          </td>
+          <td>
+            <span class="badge badge-{{ lf_status_color(o.status) }}">{{ o.status | replace('_',' ') | title }}</span>
+          </td>
+          <td class="text-muted small">{{ o.creation.strftime('%d %b %Y') if o.creation else '' }}</td>
+          <td class="d-flex gap-1">
+            <a href="/letafasta/order/{{ o.name }}" class="btn btn-sm btn-outline-primary">View</a>
+            {% if o.status == 'completed' %}
+            <button class="btn btn-sm btn-outline-secondary" onclick="reorder('{{ o.name }}')">Reorder</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="lf-empty">
+    <p class="text-muted">No orders yet. Place your first order from the <a href="/letafasta/catalogue">catalogue</a>.</p>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+function reorder(orderName) {
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.order.reorder',
+    args: {order_name: orderName},
+    callback: function(r) {
+      if (r.message && r.message.cart) {
+        localStorage.setItem('lf_cart', JSON.stringify(r.message.cart));
+        window.location.href = '/letafasta/checkout';
+      }
+    }
+  });
+}
+</script>
+{% endblock %}

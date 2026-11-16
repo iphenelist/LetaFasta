@@ -1,0 +1,285 @@
+{% extends "templates/web.html" %}
+{% block title %}{{ order.name }} — LetaFasta{% endblock %}
+
+{% block page_content %}
+<div class="lf-page">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% if is_buyer %}/letafasta/orders{% else %}/letafasta/my-orders{% endif %}">Orders</a></li>
+      <li class="breadcrumb-item active">{{ order.name }}</li>
+    </ol>
+  </nav>
+
+  <!-- Order header -->
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h2>{{ order.name }}
+        <span class="badge badge-{{ status_color }}" style="font-size:0.6em;vertical-align:middle">
+          {{ order.status | replace('_',' ') | title }}
+        </span>
+      </h2>
+      <dl class="row">
+        <dt class="col-sm-3">Supplier</dt><dd class="col-sm-9">{{ order.supplier_name }}</dd>
+        <dt class="col-sm-3">Buyer</dt><dd class="col-sm-9">{{ order.buyer }}</dd>
+        <dt class="col-sm-3">Hub</dt><dd class="col-sm-9">{{ order.hub_name }}</dd>
+        <dt class="col-sm-3">Agreed Price</dt><dd class="col-sm-9"><strong>TZS {{ order.agreed_price | int }}</strong></dd>
+        {% if order.rfq %}
+        <dt class="col-sm-3">From RFQ</dt><dd class="col-sm-9"><a href="/letafasta/rfq/{{ order.rfq }}">{{ order.rfq }}</a></dd>
+        {% endif %}
+        <dt class="col-sm-3">Payment</dt>
+        <dd class="col-sm-9">
+          {% if order.payment_recorded %}
+          <span class="text-success">✓ Payment recorded</span>
+          {% else %}
+          <span class="text-muted">Not yet recorded</span>
+          {% if is_buyer or is_supplier %}
+          <button class="btn btn-sm btn-outline-success ml-2" onclick="markPayment('{{ order.name }}')">Mark as Paid</button>
+          {% endif %}
+          {% endif %}
+        </dd>
+      </dl>
+    </div>
+    <div class="col-md-4">
+      {% if is_buyer and order.status == 'completed' %}
+      <button class="btn btn-outline-secondary btn-sm" onclick="reorder('{{ order.name }}')">
+        <i class="fa fa-refresh"></i> Reorder
+      </button>
+      {% endif %}
+      {% if order.status in ('confirmed','in_progress') %}
+      <button class="btn btn-outline-danger btn-sm ml-2" onclick="cancelOrder('{{ order.name }}')">Cancel Order</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Order items -->
+  <h5>Items</h5>
+  <div class="table-responsive mb-4">
+    <table class="table table-sm">
+      <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead>
+      <tbody>
+        {% for item in order_items %}
+        <tr>
+          <td>{{ item.product_name }}</td>
+          <td>{{ item.quantity }} {{ item.unit_label }}</td>
+          <td>TZS {{ item.unit_price | int }}</td>
+          <td>TZS {{ item.line_total | int }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loads / Truck cards -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5>Truck Loads ({{ loads | length }})</h5>
+    {% if is_supplier and order.status in ('confirmed','in_progress') %}
+    <button class="btn btn-primary btn-sm" onclick="showPlanLoad()">+ Plan Load</button>
+    {% endif %}
+  </div>
+
+  {% if loads %}
+  <div class="row" id="load-cards">
+    {% for load in loads %}
+    <div class="col-md-6 mb-3">
+      <div class="card lf-load-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong>{{ load.label }}</strong>
+          <span class="badge badge-{{ truck_status_color(load.status) }}">{{ load.status | title }}</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              {% if load.plate_number %}<div><strong>Plate:</strong> {{ load.plate_number }}</div>{% endif %}
+              {% if load.driver_name %}<div><strong>Driver:</strong> {{ load.driver_name }}</div>{% endif %}
+              {% if load.driver_phone %}<div><strong>Phone:</strong> {{ load.driver_phone }}</div>{% endif %}
+            </div>
+            <div class="col-6">
+              {% if load.transport_company_name %}<div>{{ load.transport_company_name }}</div>{% endif %}
+              {% if load.weight_kg %}<div>{{ load.weight_kg }} kg</div>{% endif %}
+              {% if load.eta %}<div>ETA: {{ load.eta }}</div>{% endif %}
+            </div>
+          </div>
+          {% if load.departed_at %}<div class="text-muted small mt-1">Departed: {{ frappe.utils.pretty_date(load.departed_at) }}</div>{% endif %}
+          {% if load.arrived_at %}<div class="text-muted small">Arrived: {{ frappe.utils.pretty_date(load.arrived_at) }}</div>{% endif %}
+          {% if load.confirmed_at %}<div class="text-success small">Collected: {{ frappe.utils.pretty_date(load.confirmed_at) }}</div>{% endif %}
+        </div>
+        {% if load.status not in ('collected','cancelled') %}
+        <div class="card-footer d-flex gap-2">
+          {% if is_supplier %}
+            {% if load.status == 'planned' %}
+            <button class="btn btn-sm btn-primary" onclick="showTransportForm('{{ load.name }}')">Add Transport Details</button>
+            {% elif load.status == 'booked' %}
+            <button class="btn btn-sm btn-warning" onclick="advanceLoad('{{ load.name }}','departed')">Mark Departed</button>
+            {% elif load.status == 'departed' %}
+            <button class="btn btn-sm btn-info" onclick="advanceLoad('{{ load.name }}','arrived')">Mark Arrived at Hub</button>
+            {% endif %}
+          {% endif %}
+          {% if is_buyer and load.status == 'arrived' %}
+          <button class="btn btn-sm btn-success" onclick="confirmCollection('{{ load.name }}')">Confirm Collection</button>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  {% if is_supplier %}
+  <div class="alert alert-info">No loads planned yet. Click "Plan Load" to add a truck.</div>
+  {% else %}
+  <div class="text-muted">The supplier hasn't planned any loads yet.</div>
+  {% endif %}
+  {% endif %}
+
+  <!-- Rating prompt -->
+  {% if show_rating_prompt %}
+  <div class="alert alert-success mt-4">
+    <strong>All loads collected!</strong>
+    How was your experience with {{ order.supplier_name }}?
+    <a href="/letafasta/rate/{{ order.name }}" class="btn btn-sm btn-success ml-2">Rate Supplier</a>
+  </div>
+  {% endif %}
+
+  <!-- Transport details modal (supplier only) -->
+  {% if is_supplier %}
+  <div class="modal fade" id="transport-modal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Add Transport Details</h5>
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="t-load-name">
+        <div class="form-group"><label>Plate Number *</label><input type="text" id="t-plate" class="form-control"></div>
+        <div class="form-group"><label>Driver Name *</label><input type="text" id="t-driver" class="form-control"></div>
+        <div class="form-row">
+          <div class="form-group col-6"><label>Driver Phone</label><input type="text" id="t-phone" class="form-control"></div>
+          <div class="form-group col-6"><label>Company</label><input type="text" id="t-company" class="form-control"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-6"><label>Departure Date</label><input type="date" id="t-dep" class="form-control"></div>
+          <div class="form-group col-6"><label>ETA at Hub</label><input type="date" id="t-eta" class="form-control"></div>
+        </div>
+        <div class="form-group"><label>Waybill No</label><input type="text" id="t-waybill" class="form-control"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitTransportDetails()">Save & Book</button>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Plan load modal -->
+  <div class="modal fade" id="plan-modal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Plan a New Load</h5>
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Weight (kg)</label><input type="number" id="p-weight" class="form-control" value="0"></div>
+        <p class="text-muted small">Items tracking is optional — you can add detailed item allocation later.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitPlanLoad()">Create Load</button>
+      </div>
+    </div></div>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+function showTransportForm(loadName) {
+  document.getElementById('t-load-name').value = loadName;
+  $('#transport-modal').modal('show');
+}
+
+function submitTransportDetails() {
+  var loadName = document.getElementById('t-load-name').value;
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.load.add_transport_details',
+    args: {
+      load_name: loadName,
+      plate_number: document.getElementById('t-plate').value,
+      driver_name: document.getElementById('t-driver').value,
+      driver_phone: document.getElementById('t-phone').value,
+      transport_company_name: document.getElementById('t-company').value,
+      departure_date: document.getElementById('t-dep').value || null,
+      eta: document.getElementById('t-eta').value || null,
+      waybill_no: document.getElementById('t-waybill').value,
+    },
+    callback: function(r) { if (r.message) { $('#transport-modal').modal('hide'); location.reload(); } }
+  });
+}
+
+function showPlanLoad() {
+  $('#plan-modal').modal('show');
+}
+
+function submitPlanLoad() {
+  var weight = document.getElementById('p-weight').value || 0;
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.load.plan_loads',
+    args: {
+      order_name: '{{ order.name }}',
+      loads_json: JSON.stringify([{weight_kg: parseInt(weight), items: []}]),
+    },
+    callback: function(r) { if (r.message) { $('#plan-modal').modal('hide'); location.reload(); } }
+  });
+}
+
+function advanceLoad(loadName, newStatus) {
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.load.update_load_status',
+    args: {load_name: loadName, new_status: newStatus},
+    callback: function(r) { if (r.message) location.reload(); }
+  });
+}
+
+function confirmCollection(loadName) {
+  if (!confirm('Confirm you have collected goods from this truck?')) return;
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.load.confirm_collection',
+    args: {load_name: loadName},
+    callback: function(r) {
+      if (r.message) {
+        location.reload();
+        if (r.message.show_rating_prompt) {
+          setTimeout(function(){ window.location.href = '/letafasta/rate/{{ order.name }}'; }, 300);
+        }
+      }
+    }
+  });
+}
+
+function markPayment(orderName) {
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.order.mark_payment_received',
+    args: {order_name: orderName},
+    callback: function(r) { if (r.message) location.reload(); }
+  });
+}
+
+function cancelOrder(orderName) {
+  frappe.prompt({fieldname:'reason', label:'Reason (optional)', fieldtype:'Data'}, function(v) {
+    frappe.call({
+      method: 'letafasta.letafasta.letafasta.api.order.cancel_order',
+      args: {order_name: orderName, reason: v.reason || ''},
+      callback: function(r) { if (r.message) location.reload(); }
+    });
+  }, 'Cancel Order');
+}
+
+function reorder(orderName) {
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.order.reorder',
+    args: {order_name: orderName},
+    callback: function(r) {
+      if (r.message && r.message.cart) {
+        localStorage.setItem('lf_cart', JSON.stringify(r.message.cart));
+        window.location.href = '/letafasta/checkout';
+      }
+    }
+  });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,992 @@
+/* LetaFasta Portal — Mobile-First Design System
+   Tanzania-tuned: high contrast, 2-col mobile grid, thumb-friendly touch targets */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ── Tokens ──────────────────────────────────────────────────────────────── */
+:root {
+  --lf-primary:       #1A6B3C;
+  --lf-primary-hover: #2A9A58;
+  --lf-primary-pale:  #E8F5EE;
+  --lf-accent:        #F4961A;
+  --lf-accent-pale:   #FFF3E0;
+  --lf-text:          #1A1A2E;
+  --lf-text-muted:    #6B7280;
+  --lf-border:        #E5E7EB;
+  --lf-bg:            #F9FAFB;
+  --lf-card:          #FFFFFF;
+  --lf-success:       #16A34A;
+  --lf-warning:       #D97706;
+  --lf-error:         #DC2626;
+  --lf-font:          'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --lf-radius:        10px;
+  --lf-radius-pill:   999px;
+  --lf-shadow-card:   0 2px 8px rgba(0,0,0,0.07);
+  --lf-shadow-float:  0 8px 24px rgba(0,0,0,0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --lf-primary:      #2A9A58;
+    --lf-primary-pale: #0d2b1a;
+    --lf-text:         #F3F4F6;
+    --lf-text-muted:   #9CA3AF;
+    --lf-border:       #374151;
+    --lf-bg:           #111827;
+    --lf-card:         #1F2937;
+  }
+}
+
+:root[data-theme="dark"] {
+  --lf-primary:      #2A9A58;
+  --lf-primary-pale: #0d2b1a;
+  --lf-text:         #F3F4F6;
+  --lf-text-muted:   #9CA3AF;
+  --lf-border:       #374151;
+  --lf-bg:           #111827;
+  --lf-card:         #1F2937;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+body {
+  font-family: var(--lf-font);
+  background: var(--lf-bg);
+  color: var(--lf-text);
+  margin: 0;
+}
+
+/* ── Typography ──────────────────────────────────────────────────────────── */
+.lf-display { font-size: 32px; font-weight: 800; line-height: 1.2; }
+.lf-h1      { font-size: 24px; font-weight: 700; }
+.lf-h2      { font-size: 20px; font-weight: 600; }
+.lf-h3      { font-size: 16px; font-weight: 600; }
+.lf-body    { font-size: 15px; font-weight: 400; line-height: 1.6; }
+.lf-small   { font-size: 13px; }
+.lf-price   { font-size: 20px; font-weight: 700; color: var(--lf-primary); }
+
+/* ── Product Grid ────────────────────────────────────────────────────────── */
+.lf-product-grid {
+  display: grid;
+  gap: 12px;
+  padding: 0 16px;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 640px)  { .lf-product-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .lf-product-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* ── Product Card ────────────────────────────────────────────────────────── */
+.lf-product-card {
+  background: var(--lf-card);
+  border-radius: var(--lf-radius);
+  box-shadow: var(--lf-shadow-card);
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+.lf-product-card:hover  { transform: translateY(-3px); box-shadow: var(--lf-shadow-float); }
+.lf-product-card:active { transform: scale(0.98); }
+.lf-product-card img    {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  background: var(--lf-border);
+}
+.lf-product-card-body   { padding: 10px; }
+.lf-product-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+.lf-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--lf-primary-pale);
+  color: var(--lf-primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--lf-radius-pill);
+}
+.lf-badge-new {
+  background: var(--lf-accent-pale);
+  color: var(--lf-accent);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--lf-radius-pill);
+}
+
+/* ── Buttons — 48px touch target ─────────────────────────────────────────── */
+.lf-btn {
+  height: 48px;
+  border-radius: var(--lf-radius);
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.15s, transform 0.1s;
+  text-decoration: none;
+  padding: 0 20px;
+}
+.lf-btn:active        { transform: scale(0.97); }
+.lf-btn-primary       { background: var(--lf-primary); color: white; }
+.lf-btn-primary:hover { background: var(--lf-primary-hover); color: white; }
+.lf-btn-accent        { background: var(--lf-accent); color: white; }
+.lf-btn-outline       { background: transparent; border: 2px solid var(--lf-primary); color: var(--lf-primary); }
+.lf-btn-full          { width: 100%; }
+.lf-btn-sm            { height: 36px; font-size: 13px; padding: 0 14px; }
+
+/* ── Skeleton Loader ─────────────────────────────────────────────────────── */
+.lf-skeleton {
+  background: linear-gradient(90deg, var(--lf-border) 25%, #f3f4f6 50%, var(--lf-border) 75%);
+  background-size: 200% 100%;
+  animation: lf-shimmer 1.4s infinite;
+  border-radius: var(--lf-radius);
+}
+@keyframes lf-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.lf-skeleton-card { height: 280px; }
+.lf-skeleton-line { height: 16px; margin-bottom: 8px; }
+
+/* ── Bottom Navigation ───────────────────────────────────────────────────── */
+.lf-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 64px;
+  background: var(--lf-card);
+  border-top: 1px solid var(--lf-border);
+  align-items: stretch;
+  z-index: 1000;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
+}
+@media (max-width: 767px) {
+  .lf-bottom-nav { display: flex; }
+  body { padding-bottom: 72px; }
+}
+.lf-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--lf-text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+}
+.lf-nav-item.active { color: var(--lf-primary); }
+.lf-nav-badge {
+  position: absolute;
+  top: 8px;
+  right: calc(50% - 18px);
+  background: var(--lf-accent);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* ── Sticky CTA (product page) ───────────────────────────────────────────── */
+.lf-sticky-cta {
+  position: sticky;
+  bottom: 64px;
+  background: var(--lf-card);
+  padding: 12px 16px;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+@media (min-width: 768px) { .lf-sticky-cta { position: static; box-shadow: none; padding: 0; } }
+
+/* ── Qty Stepper ─────────────────────────────────────────────────────────── */
+.lf-qty-stepper {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--lf-border);
+  border-radius: var(--lf-radius);
+  overflow: hidden;
+}
+.lf-qty-stepper button {
+  width: 40px;
+  height: 44px;
+  background: var(--lf-bg);
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--lf-primary);
+  font-weight: 700;
+}
+.lf-qty-stepper input {
+  width: 56px;
+  height: 44px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--lf-text);
+}
+
+/* ── Order Status Timeline ───────────────────────────────────────────────── */
+.lf-timeline { display: flex; align-items: flex-start; padding: 16px 0; }
+.lf-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.lf-step::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: var(--lf-border);
+  z-index: 0;
+}
+.lf-step:last-child::before { display: none; }
+.lf-step.done::before,
+.lf-step.active::before { background: var(--lf-primary); }
+.lf-step-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--lf-border);
+  z-index: 1;
+  border: 3px solid var(--lf-card);
+}
+.lf-step.done .lf-step-dot   { background: var(--lf-primary); }
+.lf-step.active .lf-step-dot { background: var(--lf-accent); animation: lf-pulse 1.5s infinite; }
+.lf-step-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--lf-text-muted);
+}
+.lf-step.active .lf-step-label,
+.lf-step.done .lf-step-label { color: var(--lf-text); font-weight: 600; }
+@keyframes lf-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(244,150,26,0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(244,150,26,0); }
+}
+
+/* ── Driver Tracking Map ─────────────────────────────────────────────────── */
+#tracking-map {
+  height: 300px;
+  border-radius: var(--lf-radius);
+  margin-bottom: 8px;
+}
+.lf-eta-card {
+  background: var(--lf-card);
+  border-radius: var(--lf-radius);
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  box-shadow: var(--lf-shadow-card);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lf-eta-time { font-size: 28px; font-weight: 800; color: var(--lf-primary); }
+.lf-driver-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--lf-card);
+  border-radius: var(--lf-radius);
+  box-shadow: var(--lf-shadow-card);
+  margin-top: 8px;
+}
+.lf-map-stale #tracking-map { opacity: 0.6; filter: grayscale(0.3); }
+.lf-stale-banner {
+  display: none;
+  background: var(--lf-accent-pale);
+  color: var(--lf-warning);
+  text-align: center;
+  padding: 8px;
+  font-size: 13px;
+  border-radius: var(--lf-radius);
+  margin-bottom: 8px;
+}
+.lf-map-stale .lf-stale-banner { display: block; }
+
+/* ── Platform Stats Bar ──────────────────────────────────────────────────── */
+.lf-stats-bar {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--lf-primary-pale);
+  border-radius: var(--lf-radius);
+  margin: 0 16px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lf-primary);
+}
+
+/* ── Cards / Panels ──────────────────────────────────────────────────────── */
+.lf-card {
+  background: var(--lf-card);
+  border-radius: var(--lf-radius);
+  box-shadow: var(--lf-shadow-card);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.lf-card-header {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--lf-border);
+}
+
+/* ── Form Elements ───────────────────────────────────────────────────────── */
+.lf-form-group { margin-bottom: 16px; }
+.lf-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lf-text-muted);
+  margin-bottom: 6px;
+}
+.lf-input, .lf-select, .lf-textarea {
+  width: 100%;
+  height: 48px;
+  border: 2px solid var(--lf-border);
+  border-radius: var(--lf-radius);
+  padding: 0 14px;
+  font-size: 15px;
+  font-family: var(--lf-font);
+  color: var(--lf-text);
+  background: var(--lf-card);
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.lf-textarea { height: auto; padding: 12px 14px; }
+.lf-input:focus, .lf-select:focus, .lf-textarea:focus {
+  outline: none;
+  border-color: var(--lf-primary);
+}
+
+/* ── Star Rating ─────────────────────────────────────────────────────────── */
+.lf-stars { display: flex; gap: 4px; color: var(--lf-accent); font-size: 18px; }
+.lf-star-empty { color: var(--lf-border); }
+
+/* ── Cookie Banner ───────────────────────────────────────────────────────── */
+#lf-cookie-banner {
+  position: fixed;
+  bottom: 70px;
+  left: 12px;
+  right: 12px;
+  background: #1a1a2e;
+  color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+@media (min-width: 768px) {
+  #lf-cookie-banner { left: auto; right: 24px; max-width: 420px; bottom: 24px; }
+}
+#lf-cookie-banner p  { font-size: 13px; margin: 0 0 12px; line-height: 1.5; }
+#lf-cookie-banner a  { color: var(--lf-primary-hover); }
+.lf-cookie-actions   { display: flex; gap: 8px; }
+.lf-cookie-actions button {
+  flex: 1;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+#lf-cookie-accept    { background: var(--lf-primary); color: white; }
+#lf-cookie-essential { background: rgba(255,255,255,0.15); color: white; }
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.lf-portal-footer {
+  text-align: center;
+  padding: 24px 16px;
+  font-size: 13px;
+  color: var(--lf-text-muted);
+  border-top: 1px solid var(--lf-border);
+  margin-top: 24px;
+}
+.lf-portal-footer a { color: var(--lf-text-muted); text-decoration: none; margin: 0 6px; }
+.lf-portal-footer a:hover { color: var(--lf-primary); }
+
+/* ── Utility ─────────────────────────────────────────────────────────────── */
+.lf-text-muted  { color: var(--lf-text-muted); }
+.lf-text-center { text-align: center; }
+.lf-mt-16  { margin-top: 16px; }
+.lf-mb-16  { margin-bottom: 16px; }
+.lf-p-16   { padding: 16px; }
+.lf-gap-8  { gap: 8px; }
+.lf-flex   { display: flex; }
+.lf-flex-col { flex-direction: column; }
+.lf-items-center { align-items: center; }
+.lf-justify-between { justify-content: space-between; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ALIBABA-STYLE CATALOGUE
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Page wrapper ────────────────────────────────────────────────────────── */
+.lf-ali-wrap {
+  font-family: var(--lf-font);
+  background: #f5f5f5;
+  min-height: 100vh;
+  color: #333;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.lf-ali-header {
+  background: #1A6B3C;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.lf-ali-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Logo */
+.lf-ali-logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  text-decoration: none;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+.lf-ali-logo span { color: #F4961A; }
+
+/* Search */
+.lf-ali-search-form { flex: 1; min-width: 0; }
+.lf-ali-search-wrap {
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 2px solid #F4961A;
+  background: white;
+}
+.lf-ali-search-cats {
+  background: #f0f0f0;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #ddd;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+@media (max-width: 600px) { .lf-ali-search-cats { display: none; } }
+.lf-ali-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: var(--lf-font);
+  padding: 9px 12px;
+  min-width: 0;
+  background: white;
+  color: #333;
+}
+.lf-ali-search-btn {
+  background: #F4961A;
+  color: white;
+  border: none;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--lf-font);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.lf-ali-search-btn:hover { background: #e0870f; }
+
+/* Header right actions */
+.lf-ali-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.lf-ali-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  position: relative;
+}
+.lf-ali-action svg { stroke: white; }
+.lf-ali-action-label { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.8); }
+.lf-ali-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: #F4961A;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+.lf-ali-signin {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.lf-ali-signin:hover { background: rgba(255,255,255,0.15); color: white; }
+.lf-ali-register {
+  background: #F4961A;
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 4px;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.lf-ali-register:hover { background: #e0870f; color: white; }
+
+/* Sub-nav */
+.lf-ali-subnav {
+  background: rgba(0,0,0,0.15);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.lf-ali-subnav-inner {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  overflow-x: auto;
+}
+.lf-ali-subnav-left, .lf-ali-subnav-right { display: flex; }
+.lf-ali-subnav-link {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  white-space: nowrap;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lf-ali-subnav-link:hover, .lf-ali-subnav-link--active { background: rgba(255,255,255,0.15); color: white; }
+.lf-ali-subnav-cats { font-weight: 700; }
+
+/* ── Stats bar ───────────────────────────────────────────────────────────── */
+.lf-ali-statsbar {
+  background: #fff8e8;
+  border-bottom: 1px solid #ffe0a0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 20px;
+  font-size: 13px;
+  color: #666;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.lf-ali-stats-result { margin-left: auto; color: #333; }
+
+/* ── Body layout (sidebar + products) ───────────────────────────────────── */
+.lf-ali-body {
+  display: flex;
+  gap: 12px;
+  max-width: 1400px;
+  margin: 12px auto;
+  padding: 0 12px;
+  align-items: flex-start;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+.lf-ali-sidebar {
+  width: 180px;
+  flex-shrink: 0;
+}
+@media (max-width: 768px) { .lf-ali-sidebar { display: none; } }
+
+.lf-ali-sidebar-box {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+}
+.lf-ali-sidebar-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid #f0f0f0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.lf-ali-sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+.lf-ali-sidebar-list li a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #555;
+  text-decoration: none;
+  transition: background 0.1s;
+}
+.lf-ali-sidebar-list li a:hover { background: #f5f5f5; color: #1A6B3C; }
+.lf-ali-sidebar-list li a.lf-active { color: #1A6B3C; font-weight: 700; }
+.lf-ali-sidebar-list li a span {
+  background: #f0f0f0;
+  color: #888;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.lf-ali-trust-box {
+  margin-top: 12px;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+  padding: 12px;
+}
+.lf-ali-trust-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #555;
+  padding: 5px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+.lf-ali-trust-row:last-child { border-bottom: none; }
+
+/* ── Products area ───────────────────────────────────────────────────────── */
+.lf-ali-products { flex: 1; min-width: 0; }
+
+/* Sort bar */
+.lf-ali-sort-bar {
+  background: white;
+  border: 1px solid #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #666;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-radius: 2px;
+}
+.lf-ali-sort-actions { display: flex; gap: 4px; }
+.lf-ali-sort-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--lf-font);
+  background: white;
+}
+.lf-ali-sort-btn:hover, .lf-ali-sort-btn--active {
+  background: #1A6B3C;
+  color: white;
+  border-color: #1A6B3C;
+}
+
+/* ── Product grid — Alibaba density ─────────────────────────────────────── */
+.lf-ali-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+@media (min-width: 480px)  { .lf-ali-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 768px)  { .lf-ali-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .lf-ali-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 1280px) { .lf-ali-grid { grid-template-columns: repeat(6, 1fr); } }
+
+/* ── Product card — Alibaba style ───────────────────────────────────────── */
+.lf-ali-card {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+}
+.lf-ali-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  border-color: #1A6B3C;
+  z-index: 1;
+}
+
+/* Card image */
+.lf-ali-card-img-wrap {
+  display: block;
+  position: relative;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  background: #f8f8f8;
+  flex-shrink: 0;
+}
+.lf-ali-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s;
+}
+.lf-ali-card:hover .lf-ali-card-img { transform: scale(1.05); }
+.lf-ali-card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7f5;
+}
+.lf-ali-compare-btn {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 4px 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.lf-ali-card:hover .lf-ali-compare-btn { opacity: 1; }
+
+/* Card body */
+.lf-ali-card-body { padding: 8px 10px; flex: 1; }
+.lf-ali-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 4px;
+  text-decoration: none;
+  min-height: 36px;
+}
+.lf-ali-card-title:hover { color: #1A6B3C; }
+
+/* Badge row */
+.lf-ali-card-badge-row { margin-bottom: 3px; }
+.lf-ali-hot-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #c0392b;
+  background: #fff0f0;
+  border: 1px solid #fcc;
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+/* Price — prominent like Alibaba */
+.lf-ali-card-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+.lf-ali-card-uom {
+  font-size: 11px;
+  font-weight: 400;
+  color: #999;
+}
+
+/* MOQ — always shown, gray like Alibaba */
+.lf-ali-card-moq {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+/* Supplier row */
+.lf-ali-card-supplier-row { border-top: 1px solid #f5f5f5; padding-top: 6px; }
+.lf-ali-card-supplier { font-size: 12px; margin-bottom: 2px; }
+.lf-ali-card-supplier a { color: #555; text-decoration: none; }
+.lf-ali-card-supplier a:hover { color: #1A6B3C; text-decoration: underline; }
+.lf-ali-card-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+/* Verified — Alibaba blue style */
+.lf-ali-verified {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1A6B3C;
+  border-bottom: 1px solid #1A6B3C;
+  line-height: 1.2;
+}
+.lf-ali-region {
+  font-size: 11px;
+  color: #aaa;
+}
+
+/* Add to cart — appears on hover */
+.lf-ali-card-cta {
+  padding: 0 8px 8px;
+  display: none;
+}
+.lf-ali-card:hover .lf-ali-card-cta { display: block; }
+.lf-ali-add-btn {
+  display: block;
+  width: 100%;
+  background: #1A6B3C;
+  color: white;
+  border: none;
+  padding: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: var(--lf-font);
+  transition: background 0.15s;
+}
+.lf-ali-add-btn:hover { background: #2A9A58; }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.lf-ali-empty {
+  background: white;
+  border: 1px solid #e8e8e8;
+  text-align: center;
+  padding: 60px 24px;
+  border-radius: 2px;
+}
+.lf-ali-empty svg { margin-bottom: 16px; }
+.lf-ali-empty h3 { font-size: 18px; color: #333; margin-bottom: 8px; }
+.lf-ali-empty p { font-size: 14px; color: #888; margin-bottom: 20px; }
+.lf-ali-empty-btn {
+  display: inline-block;
+  background: #1A6B3C;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ── Promo row ───────────────────────────────────────────────────────────── */
+.lf-ali-promo-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-width: 1400px;
+  margin: 12px auto;
+  padding: 0 12px;
+}
+@media (min-width: 640px) { .lf-ali-promo-row { grid-template-columns: repeat(3, 1fr); } }
+
+.lf-ali-promo-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  min-height: 100px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.lf-ali-promo-tile:hover { opacity: 0.92; }
+.lf-ali-promo-tile strong { font-size: 16px; font-weight: 800; color: white; display: block; }
+.lf-ali-promo-tile span { font-size: 12px; color: rgba(255,255,255,0.8); display: block; margin-top: 4px; }
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.lf-ali-footer {
+  background: #1a1a2e;
+  padding: 20px;
+  margin-top: 12px;
+  text-align: center;
+}
+.lf-ali-footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.lf-ali-footer-links a { color: rgba(255,255,255,0.6); font-size: 13px; text-decoration: none; }
+.lf-ali-footer-links a:hover { color: white; }
+.lf-ali-footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
+
+/* ── Mobile bottom nav stays intact ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  .lf-ali-body { padding: 0 6px; gap: 6px; }
+  .lf-ali-grid { gap: 6px; }
+  .lf-ali-card:hover .lf-ali-card-cta { display: none; } /* no hover on touch */
+  .lf-ali-add-btn { display: block; } /* always show on mobile */
+  .lf-ali-card .lf-ali-card-cta { display: block; } /* always visible on mobile */
+}

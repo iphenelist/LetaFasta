@@ -1,7 +1,5 @@
 import frappe
 
-from letafasta.letafasta.utils import get_supplier_org
-
 
 STATUS_COLORS = {
     "open": "primary", "quoted": "warning", "accepted": "success",
@@ -33,8 +31,12 @@ def get_context(context):
     already_quoted = False
 
     if not is_buyer:
-        supplier_org = get_supplier_org()
-        if supplier_org:
+        org = frappe.db.sql("""
+            SELECT parent FROM `tabLF Organization Member`
+            WHERE user = %s AND parenttype = 'LF Organization' LIMIT 1
+        """, (frappe.session.user,), as_dict=True)
+        if org:
+            supplier_org = org[0].parent
             is_supplier = True
             can_quote = rfq.status in ("open", "quoted")
             already_quoted = bool(frappe.db.exists("LF RFQ Quote", {

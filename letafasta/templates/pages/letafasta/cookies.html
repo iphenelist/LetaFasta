@@ -1,0 +1,40 @@
+{% extends "templates/web.html" %}
+{% block title %}Sera ya Vidakuzi — LetaFasta{% endblock %}
+{% block page_content %}
+<div style="max-width:800px;margin:0 auto;padding:24px 16px;">
+<h1 class="lf-h1">Sera ya Vidakuzi</h1>
+<p class="lf-small lf-text-muted">Ilisasishwa: Novemba 2026</p>
+
+<p>Jedwali hapa chini linaelezea vidakuzi (cookies) vinavyotumiwa na LetaFasta:</p>
+
+<div style="overflow-x:auto;margin-top:16px;">
+<table style="width:100%;border-collapse:collapse;font-size:14px;">
+<thead>
+<tr style="background:var(--lf-primary-pale);">
+  <th style="padding:10px;text-align:left;border:1px solid var(--lf-border);">Aina</th>
+  <th style="padding:10px;text-align:left;border:1px solid var(--lf-border);">Jina</th>
+  <th style="padding:10px;text-align:left;border:1px solid var(--lf-border);">Madhumuni</th>
+  <th style="padding:10px;text-align:left;border:1px solid var(--lf-border);">Muda</th>
+  <th style="padding:10px;text-align:left;border:1px solid var(--lf-border);">Lazima?</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding:8px;border:1px solid var(--lf-border);">Muhimu</td><td style="padding:8px;border:1px solid var(--lf-border);">sid</td><td style="padding:8px;border:1px solid var(--lf-border);">Frappe session</td><td style="padding:8px;border:1px solid var(--lf-border);">Session</td><td style="padding:8px;border:1px solid var(--lf-border);">✅ Ndiyo</td></tr>
+<tr><td style="padding:8px;border:1px solid var(--lf-border);">Muhimu</td><td style="padding:8px;border:1px solid var(--lf-border);">system_user</td><td style="padding:8px;border:1px solid var(--lf-border);">Hali ya kuingia</td><td style="padding:8px;border:1px solid var(--lf-border);">Session</td><td style="padding:8px;border:1px solid var(--lf-border);">✅ Ndiyo</td></tr>
+<tr><td style="padding:8px;border:1px solid var(--lf-border);">Muhimu</td><td style="padding:8px;border:1px solid var(--lf-border);">csrf_token</td><td style="padding:8px;border:1px solid var(--lf-border);">Usalama dhidi ya CSRF</td><td style="padding:8px;border:1px solid var(--lf-border);">Session</td><td style="padding:8px;border:1px solid var(--lf-border);">✅ Ndiyo</td></tr>
+<tr><td style="padding:8px;border:1px solid var(--lf-border);">Analytics</td><td style="padding:8px;border:1px solid var(--lf-border);">lf_cookie_consent</td><td style="padding:8px;border:1px solid var(--lf-border);">Kumbuka chaguo lako</td><td style="padding:8px;border:1px solid var(--lf-border);">Miaka 1</td><td style="padding:8px;border:1px solid var(--lf-border);">❌ Hapana</td></tr>
+<tr><td style="padding:8px;border:1px solid var(--lf-border);">Vitendo</td><td style="padding:8px;border:1px solid var(--lf-border);">lf_cart (localStorage)</td><td style="padding:8px;border:1px solid var(--lf-border);">Kumbuka kikapu chako</td><td style="padding:8px;border:1px solid var(--lf-border);">Kivinjari</td><td style="padding:8px;border:1px solid var(--lf-border);">❌ Hapana</td></tr>
+</tbody>
+</table>
+</div>
+
+<p style="margin-top:16px;">Unaweza kubadilisha chaguo lako wakati wowote kwa kufuta data ya kivinjari chako.</p>
+
+<footer class="lf-portal-footer">
+  <a href="/letafasta/terms">Masharti</a> •
+  <a href="/letafasta/privacy">Faragha</a> •
+  <a href="/letafasta/cookies">Vidakuzi</a> •
+  <a href="/letafasta/limits">Mipaka</a>
+</footer>
+</div>
+{% endblock %}

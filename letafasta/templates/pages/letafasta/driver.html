@@ -1,0 +1,80 @@
+{% extends "templates/web.html" %}
+{% block title %}Usambazaji — {{ load.name }}{% endblock %}
+
+{% block page_content %}
+<div class="lf-p-16" style="max-width:600px;margin:0 auto;">
+
+{% if delivery_done %}
+  <div class="lf-card lf-text-center">
+    <div style="font-size:48px;margin-bottom:8px;">✅</div>
+    <h2 class="lf-h2">Uwasilishaji Umekamilika</h2>
+    <p class="lf-text-muted">Hii safari imekwisha. Asante!</p>
+  </div>
+{% else %}
+  <div class="lf-card">
+    <div class="lf-card-header">🚚 Msambazaji — {{ load.label or load.name }}</div>
+    {% if so %}
+    <p class="lf-small lf-text-muted">Oda: {{ so.name }}</p>
+    {% if so.lf_buyer_address %}<p><strong>Wasilisha kwa:</strong> {{ so.lf_buyer_address }}</p>{% endif %}
+    {% endif %}
+    <div id="driver-status" style="margin-top:12px;padding:12px;background:var(--lf-primary-pale);border-radius:var(--lf-radius);">
+      <span id="status-text" style="color:var(--lf-primary);font-weight:600;">Inasubiri eneo lako...</span>
+    </div>
+  </div>
+
+  <div class="lf-card" id="map-card" style="display:none;">
+    <div id="driver-map" style="height:300px;border-radius:var(--lf-radius);"></div>
+  </div>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+  var loadName = "{{ load.name }}";
+  var token = "{{ token }}";
+  var map, myMarker;
+
+  function initMap(lat, lng) {
+    document.getElementById('map-card').style.display = 'block';
+    map = L.map('driver-map').setView([lat, lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    var icon = L.divIcon({className:'',html:'🚚',iconSize:[30,30]});
+    myMarker = L.marker([lat, lng], {icon: icon}).addTo(map).bindPopup('Uko hapa').openPopup();
+  }
+
+  function sendLocation(lat, lng) {
+    fetch('/api/method/letafasta.letafasta.api.load.update_driver_location', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': '{{ frappe.session.csrf_token }}'
+      },
+      body: JSON.stringify({load_name: loadName, token: token, lat: lat, lng: lng})
+    }).then(function() {
+      document.getElementById('status-text').textContent = '✅ Eneo limepelekwa — ' + new Date().toLocaleTimeString();
+    }).catch(function() {
+      document.getElementById('status-text').textContent = '⚠️ Hitilafu — itajaribu tena...';
+    });
+    if (map && myMarker) {
+      myMarker.setLatLng([lat, lng]);
+      map.panTo([lat, lng]);
+    } else {
+      initMap(lat, lng);
+    }
+  }
+
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(
+      function(pos) { sendLocation(pos.coords.latitude, pos.coords.longitude); },
+      function(err) { document.getElementById('status-text').textContent = '⚠️ Huwezi kupata eneo: ' + err.message; },
+      {maximumAge: 10000, timeout: 5000, enableHighAccuracy: true}
+    );
+  } else {
+    document.getElementById('status-text').textContent = '⚠️ Simu yako haiauni GPS.';
+  }
+  </script>
+{% endif %}
+
+</div>
+{% endblock %}

@@ -114,6 +114,20 @@
   <div class="alert alert-secondary">This RFQ is no longer open for quotes.</div>
   {% endif %}
   {% endif %}
+
+  <!-- Message thread -->
+  <div class="mt-4">
+    <h5>Messages</h5>
+    <div id="msg-thread" class="lf-msg-thread mb-3" style="max-height:280px;overflow-y:auto;border:1px solid #dee2e6;border-radius:4px;padding:12px"></div>
+    {% if rfq.status in ('open','quoted') %}
+    <div class="input-group">
+      <input type="text" id="msg-input" class="form-control" placeholder="Type a message…" onkeydown="if(event.key==='Enter'){sendMsg();}">
+      <div class="input-group-append">
+        <button class="btn btn-primary" onclick="sendMsg()">Send</button>
+      </div>
+    </div>
+    {% endif %}
+  </div>
 </div>
 
 <script>
@@ -165,5 +179,50 @@ function cancelRFQ(rfqName) {
     }
   });
 }
+
+// --- Messaging ---
+var _lastMsgTime = null;
+
+function renderMessages(msgs) {
+  var me = frappe.session.user;
+  var html = msgs.map(function(m) {
+    var mine = m.sender === me;
+    return '<div class="d-flex ' + (mine ? 'justify-content-end' : '') + ' mb-2">' +
+      '<div class="px-3 py-2 rounded" style="max-width:75%;background:' + (mine ? '#d4edda' : '#f1f1f1') + '">' +
+      '<div class="small text-muted">' + (mine ? 'You' : m.sender) + '</div>' +
+      '<div>' + frappe.utils.escape_html(m.message) + '</div>' +
+      '</div></div>';
+  }).join('');
+  var el = document.getElementById('msg-thread');
+  el.innerHTML = html || '<p class="text-muted text-center small mb-0">No messages yet.</p>';
+  el.scrollTop = el.scrollHeight;
+  if (msgs.length) _lastMsgTime = msgs[msgs.length - 1].creation;
+}
+
+function loadMessages() {
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.messages.get_messages',
+    args: {reference_type: 'LF RFQ', reference_name: '{{ rfq.name }}',
+           after: _lastMsgTime},
+    callback: function(r) { if (r.message) renderMessages(r.message); }
+  });
+}
+
+function sendMsg() {
+  var inp = document.getElementById('msg-input');
+  var txt = (inp.value || '').trim();
+  if (!txt) return;
+  inp.value = '';
+  frappe.call({
+    method: 'letafasta.letafasta.letafasta.api.messages.send_message',
+    args: {reference_type: 'LF RFQ', reference_name: '{{ rfq.name }}', message: txt},
+    callback: function(r) { if (r.message) loadMessages(); }
+  });
+}
+
+$(document).ready(function() {
+  loadMessages();
+  setInterval(loadMessages, 30000);
+});
 </script>
 {% endblock %}
